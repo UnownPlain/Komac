@@ -12,7 +12,7 @@ use walkdir::WalkDir;
 use winget_types::{GenericManifest, ManifestType};
 
 use crate::{
-    commands::utils::{SPINNER_TICK_RATE, SubmitOption},
+    commands::utils::{SPINNER_TICK_RATE, SubmitOption, has_font_installer},
     github::{
         WINGET_PKGS_FULL_NAME,
         client::GitHub,
@@ -134,7 +134,12 @@ impl Submit {
         // Reorder the keys in case the manifests weren't created by komac
         manifests.installer.optimize();
 
-        let package_path = PackagePath::new(identifier, Some(version), None);
+        let package_path = PackagePath::new(
+            identifier,
+            Some(version),
+            None,
+            has_font_installer(&manifests.installer),
+        );
         let mut changes = pr_changes()
             .package_identifier(identifier)
             .manifests(manifests)
@@ -154,7 +159,7 @@ impl Submit {
         }
 
         let github = GitHub::new(token)?;
-        let versions = github.get_versions(identifier).await.unwrap_or_default();
+        let (versions, font) = github.get_versions(identifier).await.unwrap_or_default();
 
         // Create an indeterminate progress bar to show as a pull request is being created
         let pr_progress = ProgressBar::new_spinner().with_message(format!(
@@ -166,6 +171,7 @@ impl Submit {
             .add_version()
             .identifier(identifier)
             .version(version)
+            .font(font)
             .versions(&versions)
             .changes(changes)
             .issue_resolves(&self.resolves)

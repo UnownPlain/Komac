@@ -1,7 +1,10 @@
 use std::collections::HashMap;
 
 use camino::Utf8Path;
-use winget_types::installer::{Architecture, Installer, Scope, VALID_FILE_EXTENSIONS};
+use winget_types::{
+    installer::{Architecture, Installer, Scope},
+    utils::ValidFileExtensions,
+};
 
 pub fn match_installers(
     previous_installers: Vec<Installer>,
@@ -50,11 +53,11 @@ pub fn match_installers(
                 }
                 let new_extension = Utf8Path::new(new_installer.url.as_str())
                     .extension()
-                    .filter(|extension| VALID_FILE_EXTENSIONS.contains(extension))
+                    .filter(|extension| ValidFileExtensions::ALL.contains(extension))
                     .unwrap_or_default();
                 let previous_extension = Utf8Path::new(previous_installer.url.as_str())
                     .extension()
-                    .filter(|extension| VALID_FILE_EXTENSIONS.contains(extension))
+                    .filter(|extension| ValidFileExtensions::ALL.contains(extension))
                     .unwrap_or_default();
                 if new_extension != previous_extension {
                     score = 0;

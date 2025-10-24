@@ -6390,8 +6390,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
 [[package]]
 name = "winget-types"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0caf057736318fe3794b0a31c49526a511f350e03f1676d1dc8aacbd8036438b"
+source = "git+https://github.com/UnownPlain/winget-types?branch=1.12.0#f58a78083b67d62cf13b2876f5a8eee697e6ad39"
 dependencies = [
  "base16ct 0.3.0",
  "bitflags",
