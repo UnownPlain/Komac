@@ -110,7 +110,7 @@ impl UpdateVersion {
         let token = TokenManager::handle(self.token.as_deref()).await?;
         let github = GitHub::new(&token)?;
 
-        let (versions, existing_pr) = try_join!(
+        let ((versions, font), existing_pr) = try_join!(
             github.get_versions(&self.package_identifier),
             github.get_existing_pull_request(&self.package_identifier, &self.package_version),
         )?;
@@ -130,7 +130,7 @@ impl UpdateVersion {
         let downloader = Downloader::new_with_concurrent(self.concurrent_downloads)?;
         let (mut manifests, mut github_values, mut files) = try_join!(
             github
-                .get_manifests(&self.package_identifier, latest_version)
+                .get_manifests(&self.package_identifier, latest_version, font)
                 .map_err(Error::new),
             self.fetch_github_values(&github).map_err(Error::new),
             downloader.download(self.urls.iter().cloned()),
@@ -211,8 +211,12 @@ impl UpdateVersion {
 
         manifests.version.update(&self.package_version);
 
-        let package_path =
-            PackagePath::new(&self.package_identifier, Some(&self.package_version), None);
+        let package_path = PackagePath::new(
+            &self.package_identifier,
+            Some(&self.package_version),
+            None,
+            font,
+        );
         let mut changes = pr_changes()
             .package_identifier(&self.package_identifier)
             .manifests(&manifests)
@@ -255,6 +259,7 @@ impl UpdateVersion {
             .add_version()
             .identifier(&self.package_identifier)
             .version(&self.package_version)
+            .font(font)
             .versions(&versions)
             .changes(changes)
             .maybe_replace_version(replace_version)
