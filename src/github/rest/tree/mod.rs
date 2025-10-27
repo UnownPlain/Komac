@@ -27,17 +27,37 @@ pub struct GitTree {
 }
 
 impl GitHub {
+    /// Retrieves all available versions for a given package identifier.
+    ///
+    /// This function first attempts to fetch versions from the manifest path.
+    /// If that fails, it tries the font path.
+    ///
+    /// Returns a tuple containing:
+    /// * `BTreeSet<PackageVersion>` - A set of all available package versions
+    /// * `bool` - `true` if the package is a font (found in the font path)
     pub async fn get_versions(
         &self,
         package_identifier: &PackageIdentifier,
-    ) -> Result<BTreeSet<PackageVersion>, GitHubError> {
-        self.get_all_versions(
-            MICROSOFT,
-            WINGET_PKGS,
-            PackagePath::new(package_identifier, None, None),
-        )
-        .await
-        .map_err(|_| GitHubError::PackageNonExistent(package_identifier.clone()))
+    ) -> Result<(BTreeSet<PackageVersion>, bool), GitHubError> {
+        match self
+            .get_all_versions(
+                MICROSOFT,
+                WINGET_PKGS,
+                PackagePath::new(package_identifier, None, None, false),
+            )
+            .await
+        {
+            Ok(versions) => Ok((versions, false)),
+            Err(_) => self
+                .get_all_versions(
+                    MICROSOFT,
+                    WINGET_PKGS,
+                    PackagePath::new(package_identifier, None, None, true),
+                )
+                .await
+                .map(|versions| (versions, true))
+                .map_err(|_| GitHubError::PackageNonExistent(package_identifier.clone())),
+        }
     }
 
     /// Returns all valid package versions under a specific repository path
