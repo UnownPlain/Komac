@@ -5,7 +5,7 @@ use camino::Utf8PathBuf;
 use clap::Parser;
 use color_eyre::{Result, eyre};
 use indicatif::ProgressBar;
-use inquire::Select;
+use inquire::MultiSelect;
 use itertools::Itertools;
 use owo_colors::OwoColorize;
 use walkdir::WalkDir;
@@ -55,7 +55,7 @@ impl Submit {
 
         let yaml_entries = self.get_yaml_file_paths()?;
 
-        let mut packages = yaml_entries
+        let packages = yaml_entries
             .iter()
             .flat_map(|path| {
                 // Read file to string so we can read it twice - once for the manifest type and
@@ -112,76 +112,78 @@ impl Submit {
             })
             .collect::<Vec<_>>();
 
-        // If there's only one package, use that. Otherwise, prompt for which package to submit
-        let manifests = match packages.iter_mut().at_most_one() {
-            Ok(None) => {
+        // If there's only one package, use that. Otherwise, prompt for which packages to submit
+        let manifests = match packages.len() {
+            0 => {
                 println!(
                     "No valid packages to submit were found in {}",
                     self.path.blue()
                 );
                 return Ok(());
             }
-            Ok(Some(manifests)) => manifests,
-            Err(_) => &mut Select::new("Please select which package to submit", packages)
+            1 => packages.into_iter().collect(),
+            _ => MultiSelect::new("Please select which packages to submit", packages)
                 .with_page_size(10)
                 .prompt()
                 .map_err(handle_inquire_error)?,
         };
 
-        let identifier = &manifests.version.package_identifier;
-        let version = &manifests.version.package_version;
+        for mut manifest in manifests {
+            let identifier = &manifest.version.package_identifier;
+            let version = &manifest.version.package_version;
 
-        // Reorder the keys in case the manifests weren't created by komac
-        manifests.installer.optimize();
+            // Reorder the keys in case the manifests weren't created by komac
+            manifest.installer.optimize();
 
-        let package_path = PackagePath::new(identifier, Some(version), None);
-        let mut changes = pr_changes()
-            .package_identifier(identifier)
-            .manifests(manifests)
-            .package_path(&package_path)
-            .create()?;
+            let package_path = PackagePath::new(identifier, Some(version), None);
+            let mut changes = pr_changes()
+                .package_identifier(identifier)
+                .manifests(&manifest)
+                .package_path(&package_path)
+                .create()?;
 
-        let submit_option = SubmitOption::prompt(
-            &mut changes,
-            identifier,
-            version,
-            self.skip_prompt,
-            self.dry_run,
-        )?;
+            let submit_option = SubmitOption::prompt(
+                &mut changes,
+                identifier,
+                version,
+                self.skip_prompt,
+                self.dry_run,
+            )?;
 
-        if submit_option.is_exit() {
-            return Ok(());
-        }
+            if submit_option.is_exit() {
+                continue;
+            }
 
-        let github = GitHub::new(token)?;
-        let versions = github.get_versions(identifier).await.unwrap_or_default();
+            let github = GitHub::new(&token)?;
+            let versions = github.get_versions(identifier).await.unwrap_or_default();
 
-        // Create an indeterminate progress bar to show as a pull request is being created
-        let pr_progress = ProgressBar::new_spinner().with_message(format!(
-            "Creating a pull request for {identifier} version {version}",
-        ));
-        pr_progress.enable_steady_tick(SPINNER_TICK_RATE);
+            // Create an indeterminate progress bar to show as a pull request is being created
+            let pr_progress = ProgressBar::new_spinner().with_message(format!(
+                "Creating a pull request for {identifier} version {version}",
+            ));
+            pr_progress.enable_steady_tick(SPINNER_TICK_RATE);
 
-        let pull_request_url = github
-            .add_version()
-            .identifier(identifier)
-            .version(version)
-            .versions(&versions)
-            .changes(changes)
-            .issue_resolves(&self.resolves)
-            .send()
-            .await?;
+            let pull_request_url = github
+                .add_version()
+                .identifier(identifier)
+                .version(version)
+                .versions(&versions)
+                .changes(changes)
+                .issue_resolves(&self.resolves)
+                .send()
+                .await?;
 
-        pr_progress.finish_and_clear();
+            pr_progress.finish_and_clear();
 
-        println!(
-            "{} created a {} to {WINGET_PKGS_FULL_NAME}",
-            "Successfully".green(),
-            "pull request".hyperlink(&pull_request_url)
-        );
+            println!(
+                "{} created a {} to {WINGET_PKGS_FULL_NAME}",
+                "Successfully".green(),
+                "pull request".hyperlink(&pull_request_url)
+            );
 
-        if self.open_pr {
-            open::that(pull_request_url.as_str())?;
+            if self.open_pr {
+                open::that(pull_request_url.as_str())?;
+            }
         }
 
         Ok(())
