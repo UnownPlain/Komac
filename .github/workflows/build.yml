@@ -26,7 +26,7 @@ jobs:
     name: Rust project - latest
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -46,18 +46,18 @@ jobs:
       - name: Test
         run: cargo test
 
-  clippy:
-    name: Cargo clippy
+  lint:
+    name: cargo clippy && cargo fmt
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy
+          components: clippy, rustfmt
 
       - uses: Swatinem/rust-cache@v2
         with:
@@ -67,6 +67,9 @@ jobs:
         run: cargo clippy
         env:
           RUSTFLAGS: "-Dwarnings"
+
+      - name: Run cargo fmt
+        run: cargo fmt --check
 
   publish_dry_run:
     name: Publish dry run
