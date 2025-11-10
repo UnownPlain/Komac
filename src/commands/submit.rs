@@ -5,14 +5,14 @@ use camino::Utf8PathBuf;
 use clap::Parser;
 use color_eyre::{Result, eyre};
 use indicatif::ProgressBar;
-use inquire::Select;
+use inquire::MultiSelect;
 use itertools::Itertools;
 use owo_colors::OwoColorize;
 use walkdir::WalkDir;
 use winget_types::{GenericManifest, ManifestType};
 
 use crate::{
-    commands::utils::{SPINNER_TICK_RATE, SubmitOption, check_package_type},
+    commands::utils::{RateLimit, SPINNER_TICK_RATE, SubmitOption, check_package_type},
     github::{
         WINGET_PKGS_FULL_NAME,
         client::GitHub,
@@ -32,6 +32,10 @@ pub struct Submit {
     #[arg(short = 'y', long = "yes", visible_alias = "submit")]
     skip_prompt: bool,
 
+    /// Submit all packages present in the folder
+    #[arg(short = 'a', long = "all")]
+    submit_all: bool,
+
     /// List of issues that submitting this version would resolve
     #[arg(long)]
     resolves: Vec<NonZeroU32>,
@@ -40,11 +44,15 @@ pub struct Submit {
     #[arg(long, env = "OPEN_PR")]
     open_pr: bool,
 
+    /// Use the per-minute rate limit, potentially hitting the hourly rate limit in 7.5 minutes
+    #[arg(long, hide = true)]
+    fast: bool,
+
     /// Run without submitting
     #[arg(long, env = "DRY_RUN")]
     dry_run: bool,
 
-    /// GitHub personal access token with the `public_repo` scope
+    /// GitHub personal access token with the  scope
     #[arg(short, long, env = "GITHUB_TOKEN")]
     token: Option<String>,
 }
@@ -55,7 +63,7 @@ impl Submit {
 
         let yaml_entries = self.get_yaml_file_paths()?;
 
-        let mut packages = yaml_entries
+        let packages = yaml_entries
             .iter()
             .flat_map(|path| {
                 // Read file to string so we can read it twice - once for the manifest type and
@@ -112,78 +120,88 @@ impl Submit {
             })
             .collect::<Vec<_>>();
 
-        // If there's only one package, use that. Otherwise, prompt for which package to submit
-        let manifests = match packages.iter_mut().at_most_one() {
-            Ok(None) => {
+        // If there's only one package, use that. Otherwise, prompt for which packages to submit
+        let manifests = match packages.len() {
+            0 => {
                 println!(
                     "No valid packages to submit were found in {}",
                     self.path.blue()
                 );
                 return Ok(());
             }
-            Ok(Some(manifests)) => manifests,
-            Err(_) => &mut Select::new("Please select which package to submit", packages)
+            1 => packages,
+            _ if self.submit_all => packages,
+            _ => MultiSelect::new("Please select which packages to submit", packages)
                 .with_page_size(10)
                 .prompt()
                 .map_err(handle_inquire_error)?,
         };
 
-        let identifier = &manifests.version.package_identifier;
-        let version = &manifests.version.package_version;
+        let rate_limit = RateLimit::new(self.fast);
 
-        // Reorder the keys in case the manifests weren't created by komac
-        manifests.installer.optimize();
+        for mut manifest in manifests {
+            let identifier = &manifest.version.package_identifier;
+            let version = &manifest.version.package_version;
 
-        let is_font = check_package_type(&manifests.installer)?;
-        let package_path = PackagePath::new(identifier, Some(version), None, is_font);
-        let mut changes = pr_changes()
-            .package_identifier(identifier)
-            .manifests(manifests)
-            .package_path(&package_path)
-            .create()?;
+            let is_font = check_package_type(&manifest.installer)?;
 
-        let submit_option = SubmitOption::prompt(
-            &mut changes,
-            identifier,
-            version,
-            self.skip_prompt,
-            self.dry_run,
-        )?;
+            // Reorder the keys in case the manifests weren't created by komac
+            manifest.installer.optimize();
 
-        if submit_option.is_exit() {
-            return Ok(());
-        }
+            let package_path = PackagePath::new(identifier, Some(version), None, is_font);
+            let mut changes = pr_changes()
+                .package_identifier(identifier)
+                .manifests(&manifest)
+                .package_path(&package_path)
+                .create()?;
 
-        let github = GitHub::new(token)?;
-        let (versions, _) = github.get_versions(identifier).await.unwrap_or_default();
+            let submit_option = SubmitOption::prompt(
+                &mut changes,
+                identifier,
+                version,
+                self.skip_prompt,
+                self.dry_run,
+            )?;
 
-        // Create an indeterminate progress bar to show as a pull request is being created
-        let pr_progress = ProgressBar::new_spinner().with_message(format!(
-            "Creating a pull request for {identifier} version {version}",
-        ));
-        pr_progress.enable_steady_tick(SPINNER_TICK_RATE);
+            if submit_option.is_exit() {
+                continue;
+            }
 
-        let pull_request_url = github
-            .add_version()
-            .identifier(identifier)
-            .version(version)
-            .versions(&versions)
-            .changes(changes)
-            .issue_resolves(&self.resolves)
-            .font(is_font)
-            .send()
-            .await?;
+            let github = GitHub::new(&token)?;
+            let (versions, _) = github.get_versions(identifier).await.unwrap_or_default();
 
-        pr_progress.finish_and_clear();
+            rate_limit.wait().await;
 
-        println!(
-            "{} created a {} to {WINGET_PKGS_FULL_NAME}",
-            "Successfully".green(),
-            "pull request".hyperlink(&pull_request_url)
-        );
+            // Create an indeterminate progress bar to show as a pull request is being created
+            let pr_progress = ProgressBar::new_spinner().with_message(format!(
+                "Creating a pull request for {identifier} version {version}",
+            ));
+            pr_progress.enable_steady_tick(SPINNER_TICK_RATE);
 
-        if self.open_pr {
-            open::that(pull_request_url.as_str())?;
+            let pull_request_url = github
+                .add_version()
+                .identifier(identifier)
+                .version(version)
+                .versions(&versions)
+                .changes(changes)
+                .issue_resolves(&self.resolves)
+                .font(is_font)
+                .send()
+                .await?;
+
+            rate_limit.record().await;
+
+            pr_progress.finish_and_clear();
+
+            println!(
+                "{} created a {} to {WINGET_PKGS_FULL_NAME}",
+                "Successfully".green(),
+                "pull request".hyperlink(&pull_request_url)
+            );
+
+            if self.open_pr {
+                open::that(pull_request_url.as_str())?;
+            }
         }
 
         Ok(())
