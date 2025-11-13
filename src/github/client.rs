@@ -68,8 +68,9 @@ impl GitHub {
         &self,
         identifier: &PackageIdentifier,
         latest_version: &PackageVersion,
+        font: bool,
     ) -> Result<Manifests, GitHubError> {
-        let full_package_path = PackagePath::new(identifier, Some(latest_version), None);
+        let full_package_path = PackagePath::new(identifier, Some(latest_version), None, font);
         let content = self
             .get_directory_content_with_text(MICROSOFT, WINGET_PKGS, &full_package_path)
             .await?
@@ -163,10 +164,18 @@ impl GitHub {
         version: &PackageVersion,
         manifest_type: ManifestTypeWithLocale,
     ) -> Result<T, GitHubError> {
-        let path = PackagePath::new(identifier, Some(version), Some(&manifest_type));
-        let content = self.get_file_content(MICROSOFT, WINGET_PKGS, &path).await?;
-        let manifest = serde_yaml::from_str::<T>(&content)?;
-        Ok(manifest)
+        let path = PackagePath::new(identifier, Some(version), Some(&manifest_type), false);
+        match self.get_file_content(MICROSOFT, WINGET_PKGS, &path).await {
+            Ok(content) => Ok(serde_yaml::from_str::<T>(&content)?),
+            Err(_) => {
+                let font_path =
+                    PackagePath::new(identifier, Some(version), Some(&manifest_type), true);
+                let content = self
+                    .get_file_content(MICROSOFT, WINGET_PKGS, &font_path)
+                    .await?;
+                Ok(serde_yaml::from_str::<T>(&content)?)
+            }
+        }
     }
 
     #[builder(finish_fn = send)]
@@ -493,6 +502,7 @@ impl GitHub {
         reason: &str,
         fork: &RepositoryData,
         winget_pkgs: &RepositoryData,
+        font: bool,
         #[builder(default)] issue_resolves: &[NonZeroU32],
     ) -> Result<Url, GitHubError> {
         // Create an indeterminate progress bar to show as a pull request is being created
@@ -514,7 +524,7 @@ impl GitHub {
             .get_directory_content()
             .owner(&fork.owner)
             .branch_name(&branch_name)
-            .path(&PackagePath::new(identifier, Some(version), None))
+            .path(&PackagePath::new(identifier, Some(version), None, font))
             .call()
             .await?
             .map(FileDeletion::new)
@@ -556,6 +566,7 @@ impl GitHub {
         &self,
         identifier: &PackageIdentifier,
         version: &PackageVersion,
+        font: bool,
         versions: Option<&BTreeSet<PackageVersion>>,
         changes: Vec<(String, String)>,
         replace_version: Option<&PackageVersion>,
@@ -579,7 +590,7 @@ impl GitHub {
             self.get_directory_content()
                 .owner(&current_user)
                 .branch_name(&branch_name)
-                .path(&PackagePath::new(identifier, replace_version, None))
+                .path(&PackagePath::new(identifier, replace_version, None, font))
                 .call()
                 .await?
                 .map(FileDeletion::new)
