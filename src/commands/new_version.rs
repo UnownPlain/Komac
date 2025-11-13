@@ -32,7 +32,8 @@ use winget_types::{
 
 use crate::{
     commands::utils::{
-        SPINNER_TICK_RATE, SubmitOption, prompt_existing_pull_request, write_changes_to_dir,
+        SPINNER_TICK_RATE, SubmitOption, has_font_installer, prompt_existing_pull_request,
+        write_changes_to_dir,
     },
     download::Downloader,
     download_file::process_files,
@@ -160,7 +161,12 @@ impl NewVersion {
 
         let package_identifier = required_prompt(self.package_identifier, None::<&str>)?;
 
-        let versions = github.get_versions(&package_identifier).await.ok();
+        let (versions, font) = github
+            .get_versions(&package_identifier)
+            .await
+            .ok()
+            .map(|(versions, font)| (Some(versions), font))
+            .unwrap_or((None, false));
 
         let latest_version = versions.as_ref().and_then(BTreeSet::last);
 
@@ -169,7 +175,7 @@ impl NewVersion {
         }
 
         let manifests =
-            latest_version.map(|version| github.get_manifests(&package_identifier, version));
+            latest_version.map(|version| github.get_manifests(&package_identifier, version, font));
 
         let package_version = required_prompt(self.package_version, None::<&str>)?;
 
@@ -278,30 +284,35 @@ impl NewVersion {
         let mut installer_manifest = InstallerManifest {
             package_identifier: package_identifier.clone(),
             package_version: package_version.clone(),
-            install_modes: if installers
+            installers,
+            manifest_type: ManifestType::Installer,
+            ..InstallerManifest::default()
+        };
+
+        if !has_font_installer(&installer_manifest) {
+            installer_manifest.install_modes = if installer_manifest
+                .installers
                 .iter()
                 .any(|installer| installer.r#type == Some(InstallerType::Inno))
             {
                 InstallModes::all()
             } else {
                 check_prompt::<InstallModes>()?
-            },
-            success_codes: list_prompt::<InstallerSuccessCode>()?,
-            upgrade_behavior: Some(radio_prompt::<UpgradeBehavior>()?),
-            commands: list_prompt::<Command>()?,
-            protocols: list_prompt::<Protocol>()?,
-            file_extensions: if installers
+            };
+            installer_manifest.success_codes = list_prompt::<InstallerSuccessCode>()?;
+            installer_manifest.upgrade_behavior = Some(radio_prompt::<UpgradeBehavior>()?);
+            installer_manifest.commands = list_prompt::<Command>()?;
+            installer_manifest.protocols = list_prompt::<Protocol>()?;
+            installer_manifest.file_extensions = if installer_manifest
+                .installers
                 .iter()
                 .all(|installer| installer.file_extensions.is_empty())
             {
                 list_prompt::<FileExtension>()?
             } else {
                 BTreeSet::new()
-            },
-            installers,
-            manifest_type: ManifestType::Installer,
-            ..InstallerManifest::default()
-        };
+            };
+        }
 
         let mut github_values = match github_values.await? {
             Some(future) => Some(future?),
@@ -419,7 +430,12 @@ impl NewVersion {
             version: version_manifest,
         };
 
-        let package_path = PackagePath::new(&package_identifier, Some(&package_version), None);
+        let package_path = PackagePath::new(
+            &package_identifier,
+            Some(&package_version),
+            None,
+            has_font_installer(&manifests.installer),
+        );
         let mut changes = pr_changes()
             .package_identifier(&package_identifier)
             .manifests(&manifests)
@@ -457,6 +473,7 @@ impl NewVersion {
             .add_version()
             .identifier(&package_identifier)
             .version(&package_version)
+            .font(has_font_installer(&manifests.installer))
             .maybe_versions(versions.as_ref())
             .changes(changes)
             .issue_resolves(&self.resolves)
