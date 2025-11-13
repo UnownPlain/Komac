@@ -92,7 +92,7 @@ impl RemoveDeadVersions {
         let token = TokenManager::handle(self.token).await?;
         let github = GitHub::new(token)?;
 
-        let (fork, winget_pkgs, versions) = try_join!(
+        let (fork, winget_pkgs, (versions, font)) = try_join!(
             github
                 .get_username()
                 .and_then(|current_user| github.get_winget_pkgs().owner(current_user).send()),
@@ -190,6 +190,7 @@ impl RemoveDeadVersions {
                         .reason(&deletion_reason)
                         .fork(&fork)
                         .winget_pkgs(&winget_pkgs)
+                        .font(font)
                         .send()
                         .await?;
 

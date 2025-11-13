@@ -12,7 +12,10 @@ use inquire::error::InquireResult;
 use owo_colors::OwoColorize;
 pub use submit_option::SubmitOption;
 use tokio::{fs, fs::File, io::AsyncWriteExt};
-use winget_types::{PackageIdentifier, PackageVersion};
+use winget_types::{
+    PackageIdentifier, PackageVersion,
+    installer::{InstallerManifest, InstallerType, NestedInstallerType},
+};
 
 use crate::{
     commands::utils::environment::CI, github::graphql::get_existing_pull_request::PullRequest,
@@ -57,4 +60,11 @@ pub async fn write_changes_to_dir(changes: &[(String, String)], output: &Utf8Pat
         .buffer_unordered(2)
         .try_collect()
         .await
+}
+
+pub fn has_font_installer(installer_manifest: &InstallerManifest) -> bool {
+    installer_manifest.installers.iter().any(|installer| {
+            installer.r#type == Some(InstallerType::Font)
+                || installer.nested_installer_type == Some(NestedInstallerType::Font)
+        } || installer_manifest.nested_installer_type == Some(NestedInstallerType::Font))
 }
