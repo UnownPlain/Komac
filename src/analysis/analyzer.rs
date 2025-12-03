@@ -1,21 +1,21 @@
 use std::{io::Cursor, mem};
 
 use camino::Utf8Path;
-use color_eyre::eyre::{Result, bail};
+use color_eyre::eyre::Result;
 use memmap2::Mmap;
 use tracing::debug;
 use winget_types::{
     installer::Installer,
     locale::{Copyright, PackageName, Publisher},
+    utils::ValidFileExtensions,
 };
 use yara_x::mods::PE;
 
-use super::extensions::{APPX, APPX_BUNDLE, EXE, MSI, MSIX, MSIX_BUNDLE, ZIP};
 use crate::{
     analysis::{
         Installers,
         installers::{
-            Exe, Msi, Zip,
+            Exe, Font, Msi, Zip,
             msix_family::{Msix, bundle::MsixBundle},
         },
     },
@@ -33,23 +33,30 @@ pub struct Analyzer<'data> {
 
 impl<'data> Analyzer<'data> {
     pub fn new(data: &'data Mmap, file_name: &str) -> Result<Self> {
-        let extension = Utf8Path::new(file_name).extension().unwrap_or_default();
+        let extension = Utf8Path::new(file_name)
+            .extension()
+            .unwrap_or_default()
+            .parse::<ValidFileExtensions>()?;
 
         let mut zip = None;
         let mut copyright = None;
         let mut package_name = None;
         let mut publisher = None;
         let installers = match extension {
-            MSI => Msi::new(Cursor::new(data.as_ref()))?.installers(),
-            MSIX | APPX => Msix::new(Cursor::new(data.as_ref()))?.installers(),
-            MSIX_BUNDLE | APPX_BUNDLE => MsixBundle::new(Cursor::new(data.as_ref()))?.installers(),
-            ZIP => {
+            ValidFileExtensions::Msi => Msi::new(Cursor::new(data.as_ref()))?.installers(),
+            ValidFileExtensions::Msix | ValidFileExtensions::Appx => {
+                Msix::new(Cursor::new(data.as_ref()))?.installers()
+            }
+            ValidFileExtensions::MsixBundle | ValidFileExtensions::AppxBundle => {
+                MsixBundle::new(Cursor::new(data.as_ref()))?.installers()
+            }
+            ValidFileExtensions::Zip => {
                 let mut scoped_zip = Zip::new(Cursor::new(data.as_ref()))?;
                 let installers = mem::take(&mut scoped_zip.installers);
                 zip = Some(scoped_zip);
                 installers
             }
-            EXE => {
+            ValidFileExtensions::Exe => {
                 let pe = yara_x::mods::invoke::<PE>(data.as_ref()).unwrap();
                 debug!(?pe.version_info);
                 copyright = Copyright::from_version_info(&pe.version_info);
@@ -57,7 +64,11 @@ impl<'data> Analyzer<'data> {
                 publisher = Publisher::from_version_info(&pe.version_info);
                 Exe::new(Cursor::new(data.as_ref()), &pe)?.installers()
             }
-            _ => bail!(r#"Unsupported file extension: "{extension}""#),
+            ValidFileExtensions::Fnt
+            | ValidFileExtensions::Otc
+            | ValidFileExtensions::Otf
+            | ValidFileExtensions::Ttc
+            | ValidFileExtensions::Ttf => Font::new(Cursor::new(data.as_ref()))?.installers(),
         };
         Ok(Self {
             installers,

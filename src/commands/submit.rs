@@ -12,7 +12,7 @@ use walkdir::WalkDir;
 use winget_types::{GenericManifest, ManifestType};
 
 use crate::{
-    commands::utils::{RateLimit, SPINNER_TICK_RATE, SubmitOption},
+    commands::utils::{RateLimit, SPINNER_TICK_RATE, SubmitOption, has_font_installer},
     github::{
         WINGET_PKGS_FULL_NAME,
         client::GitHub,
@@ -146,7 +146,8 @@ impl Submit {
             // Reorder the keys in case the manifests weren't created by komac
             manifest.installer.optimize();
 
-            let package_path = PackagePath::new(identifier, Some(version), None);
+            let is_font = has_font_installer(&manifest.installer);
+            let package_path = PackagePath::new(identifier, Some(version), None, is_font);
             let mut changes = pr_changes()
                 .package_identifier(identifier)
                 .manifests(&manifest)
@@ -165,8 +166,8 @@ impl Submit {
                 continue;
             }
 
-            let github = GitHub::new(&token)?;
-            let versions = github.get_versions(identifier).await.unwrap_or_default();
+            let github = GitHub::new(token.as_ref())?;
+            let (versions, _) = github.get_versions(identifier).await.unwrap_or_default();
 
             rate_limit.wait().await;
 
@@ -183,6 +184,7 @@ impl Submit {
                 .versions(&versions)
                 .changes(changes)
                 .issue_resolves(&self.resolves)
+                .font(is_font)
                 .send()
                 .await?;
 
