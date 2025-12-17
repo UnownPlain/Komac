@@ -1,6 +1,6 @@
 pub mod burn;
 mod exe;
-mod font;
+pub mod font;
 pub mod inno;
 mod msi;
 pub mod msix_family;
