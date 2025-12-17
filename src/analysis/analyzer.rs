@@ -69,7 +69,9 @@ impl<'data> Analyzer<'data> {
             | ValidFileExtensions::Otc
             | ValidFileExtensions::Otf
             | ValidFileExtensions::Ttc
-            | ValidFileExtensions::Ttf => Font::new(Cursor::new(data.as_ref()))?.installers(),
+            | ValidFileExtensions::Ttf => {
+                Font::new(Cursor::new(data.as_ref()), file_name)?.installers()
+            }
         };
         Ok(Self {
             installers,
