@@ -477,7 +477,7 @@ version = "3.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89ec27229c38ed0eb3c0feee3d2c1d6a4379ae44f418a29a658890e062d8f365"
 dependencies = [
- "darling 0.21.3",
+ "darling 0.20.11",
  "ident_case",
  "prettyplease",
  "proc-macro2",
@@ -6315,8 +6315,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
 [[package]]
 name = "winget-types"
 version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9479f49b42e557457b3b15e2656c0bdf7da710ce596291a6ca2b9e7ae428ad6"
+source = "git+https://github.com/UnownPlain/winget-types?branch=ext-enum#82886e9b39d05834c07c312b2123def58e524077"
 dependencies = [
  "base16ct 1.0.0",
  "bitflags",
