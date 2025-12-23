@@ -6,13 +6,16 @@ use std::time::Duration;
 use anstream::println;
 use camino::Utf8Path;
 use chrono::Local;
-use color_eyre::Result;
+use color_eyre::{Result, eyre::bail};
 use futures_util::{StreamExt, TryStreamExt, stream};
 use inquire::error::InquireResult;
 use owo_colors::OwoColorize;
 pub use submit_option::SubmitOption;
 use tokio::{fs, fs::File, io::AsyncWriteExt};
-use winget_types::{PackageIdentifier, PackageVersion};
+use winget_types::{
+    PackageIdentifier, PackageVersion,
+    installer::{InstallerManifest, InstallerType, NestedInstallerType},
+};
 
 use crate::{
     commands::utils::environment::CI, github::graphql::get_existing_pull_request::PullRequest,
@@ -57,4 +60,33 @@ pub async fn write_changes_to_dir(changes: &[(String, String)], output: &Utf8Pat
         .buffer_unordered(2)
         .try_collect()
         .await
+}
+
+pub fn check_package_type(manifest: &InstallerManifest) -> Result<bool> {
+    let root_type = manifest.r#type;
+    let root_nested_type = manifest.nested_installer_type;
+
+    let mut has_font = false;
+    let mut has_installer = false;
+
+    for installer in &manifest.installers {
+        // Use installer-level type if specified, otherwise inherit from root
+        let effective_type = installer.r#type.or(root_type);
+        let effective_nested_type = installer.nested_installer_type.or(root_nested_type);
+
+        let is_font = effective_type == Some(InstallerType::Font)
+            || effective_nested_type == Some(NestedInstallerType::Font);
+
+        if is_font {
+            has_font = true;
+        } else {
+            has_installer = true;
+        }
+    }
+
+    if has_font && has_installer {
+        bail!("Font and non-font installers cannot be mixed in the same manifest");
+    }
+
+    Ok(has_font)
 }
