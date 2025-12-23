@@ -33,6 +33,10 @@ pub struct ShowVersion {
     #[arg(long)]
     version_manifest: bool,
 
+    /// Look for the package under fonts instead of probing manifests first
+    #[arg(long)]
+    font: bool,
+
     /// GitHub personal access token with the `public_repo` scope
     #[arg(short, long, env = "GITHUB_TOKEN", hide_env_values = true)]
     token: Option<SecretString>,
@@ -44,7 +48,9 @@ impl ShowVersion {
         let github = GitHub::new(&token_manager)?;
 
         // Get a list of all versions for the given package
-        let mut versions = github.get_versions(&self.package_identifier).await?;
+        let (mut versions, font) = github
+            .get_versions(&self.package_identifier, self.font.then_some(true))
+            .await?;
 
         // Get the manifests for the latest or specified version
         let manifests = github
@@ -53,6 +59,7 @@ impl ShowVersion {
                 &self
                     .package_version
                     .unwrap_or_else(|| versions.pop_last().unwrap_or_else(|| unreachable!())),
+                font,
             )
             .await?;
 
