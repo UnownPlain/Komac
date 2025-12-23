@@ -14,7 +14,7 @@ use winget_types::{
 use crate::analysis::{
     Installers,
     installers::{
-        Exe, Msi, Zip,
+        Exe, Font, Msi, Zip,
         msix_family::{Msix, bundle::MsixBundle},
     },
 };
@@ -72,7 +72,11 @@ impl<'reader, R: Read + Seek> Analyzer<'reader, R> {
                     ..Self::default()
                 });
             }
-            _ => unreachable!(),
+            ValidFileExtensions::Fnt
+            | ValidFileExtensions::Otc
+            | ValidFileExtensions::Otf
+            | ValidFileExtensions::Ttc
+            | ValidFileExtensions::Ttf => Font::new(reader)?.installers(),
         };
         Ok(Self {
             installers,
