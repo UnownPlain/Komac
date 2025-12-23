@@ -71,7 +71,7 @@ impl RemoveVersion {
 
         let github = GitHub::new(&token_manager)?;
 
-        let (fork, winget_pkgs, versions) = try_join!(
+        let (fork, winget_pkgs, (versions, font)) = try_join!(
             github
                 .get_username()
                 .and_then(|current_user| github.get_winget_pkgs().owner(current_user).send()),
@@ -120,6 +120,7 @@ impl RemoveVersion {
             .reason(&deletion_reason)
             .fork(&fork)
             .winget_pkgs(&winget_pkgs)
+            .font(font)
             .issue_resolves(&self.resolves)
             .send()
             .await?;
