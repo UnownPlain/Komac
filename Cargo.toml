@@ -111,3 +111,8 @@ rstest = "0.26.1"
 assets = [
     { source = "target/release/komac", dest = "/usr/bin/komac", mode = "755" },
 ]
+
+# Added so this builds
+# Remove when new winget-types version is released
+[patch.crates-io]
+winget-types = { git = "https://github.com/UnownPlain/winget-types", branch = "ext-enum" }
