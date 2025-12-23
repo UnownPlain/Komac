@@ -32,11 +32,11 @@ use winget_types::{
         AppsAndFeaturesEntries, AppsAndFeaturesEntry, Architecture, InstallationMetadata,
         Installer, InstallerType, Scope,
     },
+    utils::ValidFileExtensions,
 };
 use zerocopy::{FromBytes, LE};
 
 use super::{
-    super::extensions::EXE,
     nsis::{
         entry::{Entry, EntryError},
         file_system::FsEntry,
@@ -180,7 +180,9 @@ impl Nsis {
                     .filter(|file| {
                         Utf8Path::new(file.name())
                             .extension()
-                            .is_some_and(|extension| extension.eq_ignore_ascii_case(EXE))
+                            .is_some_and(|extension| {
+                                extension.eq_ignore_ascii_case(ValidFileExtensions::Exe.as_str())
+                            })
                     })
                     .min_by_key(|file| levenshtein(file.name(), &app_name))
                     .and_then(|file| {
