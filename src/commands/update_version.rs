@@ -23,7 +23,8 @@ use winget_types::{
 use crate::{
     analysis::installers::Zip,
     commands::utils::{
-        SPINNER_TICK_RATE, SubmitOption, prompt_existing_pull_request, write_changes_to_dir,
+        SPINNER_TICK_RATE, SubmitOption, inherit_manifest_properties, prompt_existing_pull_request,
+        write_changes_to_dir,
     },
     download::Downloader,
     download_file::process_files,
@@ -110,7 +111,7 @@ impl UpdateVersion {
         let token = TokenManager::handle(self.token.as_deref()).await?;
         let github = GitHub::new(&token)?;
 
-        let (versions, existing_pr) = try_join!(
+        let ((versions, font), existing_pr) = try_join!(
             github.get_versions(&self.package_identifier),
             github.get_existing_pull_request(&self.package_identifier, &self.package_version),
         )?;
@@ -130,7 +131,7 @@ impl UpdateVersion {
         let downloader = Downloader::new_with_concurrent(self.concurrent_downloads)?;
         let (mut manifests, mut github_values, mut files) = try_join!(
             github
-                .get_manifests(&self.package_identifier, latest_version)
+                .get_manifests(&self.package_identifier, latest_version, font)
                 .map_err(Error::new),
             self.fetch_github_values(&github).map_err(Error::new),
             downloader.download(self.urls.iter().cloned()),
@@ -141,21 +142,9 @@ impl UpdateVersion {
             .iter_mut()
             .flat_map(|(_url, analyser)| mem::take(&mut analyser.installers))
             .collect::<Vec<_>>();
-        let previous_installers = mem::take(&mut manifests.installer.installers)
-            .into_iter()
-            .map(|mut installer| {
-                if manifests.installer.r#type.is_some() {
-                    installer.r#type = manifests.installer.r#type;
-                }
-                if manifests.installer.nested_installer_type.is_some() {
-                    installer.nested_installer_type = manifests.installer.nested_installer_type;
-                }
-                if manifests.installer.scope.is_some() {
-                    installer.scope = manifests.installer.scope;
-                }
-                installer
-            })
-            .collect::<Vec<_>>();
+        let previous_installers =
+            inherit_manifest_properties(&manifests.installer).collect::<Vec<_>>();
+        manifests.installer.installers.clear();
         manifests.default_locale.package_version = self.package_version.clone();
         let matched_installers = match_installers(previous_installers, &installer_results);
         let installers = matched_installers
@@ -221,8 +210,12 @@ impl UpdateVersion {
 
         manifests.version.update(&self.package_version);
 
-        let package_path =
-            PackagePath::new(&self.package_identifier, Some(&self.package_version), None);
+        let package_path = PackagePath::new(
+            &self.package_identifier,
+            Some(&self.package_version),
+            None,
+            font,
+        );
         let mut changes = pr_changes()
             .package_identifier(&self.package_identifier)
             .manifests(&manifests)
