@@ -47,7 +47,7 @@ impl ListVersions {
         let token = TokenManager::handle(self.token).await?;
         let github = GitHub::new(&token)?;
 
-        let versions = github.get_versions(&self.package_identifier).await?;
+        let (versions, _) = github.get_versions(&self.package_identifier).await?;
 
         let mut stdout_lock = anstream::stdout().lock();
         match self.output_type {

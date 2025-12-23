@@ -15,7 +15,7 @@ use crate::{
     analysis::{
         Installers,
         installers::{
-            Exe, Msi, Zip,
+            Exe, Font, Msi, Zip,
             msix_family::{Msix, bundle::MsixBundle},
         },
     },
@@ -65,7 +65,11 @@ impl<'data> Analyzer<'data> {
                 publisher = Publisher::from_version_info(&pe.version_info);
                 Exe::new(Cursor::new(data.as_ref()), &pe)?.installers()
             }
-            _ => unreachable!(),
+            ValidFileExtensions::Fnt
+            | ValidFileExtensions::Otc
+            | ValidFileExtensions::Otf
+            | ValidFileExtensions::Ttc
+            | ValidFileExtensions::Ttf => Font::new(Cursor::new(data.as_ref()))?.installers(),
         };
         Ok(Self {
             installers,
