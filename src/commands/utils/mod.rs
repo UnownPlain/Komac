@@ -7,14 +7,17 @@ use std::time::Duration;
 use anstream::println;
 use camino::Utf8Path;
 use chrono::Local;
-use color_eyre::Result;
+use color_eyre::{Result, eyre::bail};
 use futures_util::{StreamExt, TryStreamExt, stream};
 use inquire::error::InquireResult;
 use owo_colors::OwoColorize;
 pub use rate_limit::RateLimit;
 pub use submit_option::SubmitOption;
 use tokio::{fs, fs::File, io::AsyncWriteExt};
-use winget_types::{PackageIdentifier, PackageVersion};
+use winget_types::{
+    PackageIdentifier, PackageVersion,
+    installer::{Installer, InstallerManifest, InstallerType, NestedInstallerType},
+};
 
 use crate::{
     commands::utils::environment::CI, github::graphql::get_existing_pull_request::PullRequest,
@@ -59,4 +62,39 @@ pub async fn write_changes_to_dir(changes: &[(String, String)], output: &Utf8Pat
         .buffer_unordered(2)
         .try_collect()
         .await
+}
+
+pub fn inherit_manifest_properties(
+    manifest: &InstallerManifest,
+) -> impl Iterator<Item = Installer> + '_ {
+    manifest.installers.iter().cloned().map(|mut installer| {
+        if manifest.r#type.is_some() {
+            installer.r#type = manifest.r#type;
+        }
+        if manifest.nested_installer_type.is_some() {
+            installer.nested_installer_type = manifest.nested_installer_type;
+        }
+        if manifest.scope.is_some() {
+            installer.scope = manifest.scope;
+        }
+        installer
+    })
+}
+
+pub fn check_package_type(manifest: &InstallerManifest) -> Result<bool> {
+    let installers: Vec<_> = inherit_manifest_properties(manifest).collect();
+
+    let is_font = |installer: &Installer| {
+        installer.r#type == Some(InstallerType::Font)
+            || installer.nested_installer_type == Some(NestedInstallerType::Font)
+    };
+
+    let has_font = installers.iter().any(is_font);
+    let has_installer = installers.iter().any(|installer| !is_font(installer));
+
+    if has_font && has_installer {
+        bail!("Application and font installers cannot be mixed in the same manifest");
+    }
+
+    Ok(has_font)
 }
