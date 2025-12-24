@@ -22,13 +22,13 @@ jobs:
           - os: windows-2025
             target: x86_64-pc-windows-msvc
             inno_arch: x64
-          - os: windows-2025
+          - os: windows-11-arm
             target: aarch64-pc-windows-msvc
             inno_arch: arm64
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             bins: cargo-zigbuild, cargo-deb, cargo-generate-rpm
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             bins: cargo-zigbuild, cargo-deb, cargo-generate-rpm
           - os: macos-latest
@@ -96,6 +96,13 @@ jobs:
             Rename-Item -Path "target/${{ matrix.platform.target }}/release/$bin" -NewName "$newName"
           }
           "name=$newName" >> $env:GITHUB_OUTPUT
+
+      - name: Setup WinGet (Arm Runner)
+        if: ${{ matrix.platform.os == 'windows-11-arm' }}
+        shell: pwsh
+        run: |
+          Install-Module -Name Microsoft.WinGet.Client -Repository PSGallery -Force
+          Repair-WinGetPackageManager -Latest -Force
 
       - name: Create Tar archive
         if: ${{ runner.os != 'Windows' }}
