@@ -22,13 +22,13 @@ jobs:
           - os: windows-2025
             target: x86_64-pc-windows-msvc
             inno_arch: x64
-          - os: windows-2025
+          - os: windows-11-arm
             target: aarch64-pc-windows-msvc
             inno_arch: arm64
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             bins: cargo-zigbuild, cargo-deb, cargo-generate-rpm
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             bins: cargo-zigbuild, cargo-deb, cargo-generate-rpm
           - os: macos-latest
@@ -110,9 +110,9 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: |
-          winget install --exact JRSoftware.InnoSetup --scope machine --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+          iscc.exe /?
           $input = "../../target/${{ matrix.platform.target }}/release/${{ steps.rename_binary.outputs.name }}"
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe" assets/inno/installer.iss `
+          iscc.exe assets/inno/installer.iss `
             /DInputExecutable=$input `
             /DArchitecture=${{ matrix.platform.inno_arch }} `
             /F$("${{ steps.rename_binary.outputs.name }}".Replace("komac", "komac-setup").TrimEnd(".exe"))
