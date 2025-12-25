@@ -97,13 +97,6 @@ jobs:
           }
           "name=$newName" >> $env:GITHUB_OUTPUT
 
-      - name: Setup WinGet (Arm Runner)
-        if: ${{ matrix.platform.os == 'windows-11-arm' }}
-        shell: pwsh
-        run: |
-          Install-Module -Name Microsoft.WinGet.Client -Repository PSGallery -Force
-          Repair-WinGetPackageManager -Latest -Force
-
       - name: Create Tar archive
         if: ${{ runner.os != 'Windows' }}
         run: |
@@ -117,9 +110,9 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: |
-          winget install --exact JRSoftware.InnoSetup --scope machine --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+          iscc.exe /?
           $input = "../../target/${{ matrix.platform.target }}/release/${{ steps.rename_binary.outputs.name }}"
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe" assets/inno/installer.iss `
+          iscc.exe assets/inno/installer.iss `
             /DInputExecutable=$input `
             /DArchitecture=${{ matrix.platform.inno_arch }} `
             /F$("${{ steps.rename_binary.outputs.name }}".Replace("komac", "komac-setup").TrimEnd(".exe"))
