@@ -1,5 +1,8 @@
+use anstream::println;
 use bon::builder;
 use color_eyre::Result;
+use supports_hyperlinks::supports_hyperlinks;
+use url::Url;
 use winget_types::PackageIdentifier;
 
 use crate::{
@@ -41,4 +44,15 @@ pub fn pr_changes(
         build_manifest_string(&manifests.version, created_with)?,
     ));
     Ok(path_content_map)
+}
+
+pub fn print_created_pull_request(url: &Url, message: impl std::fmt::Display) {
+    println!("{message}");
+    print_pull_request_url(url);
+}
+
+pub fn print_pull_request_url(url: &Url) {
+    if !supports_hyperlinks() {
+        println!("{}", url.as_str());
+    }
 }
