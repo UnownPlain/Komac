@@ -10,6 +10,7 @@ use itertools::Itertools;
 use owo_colors::OwoColorize;
 use reqwest::Client;
 use serde::de::DeserializeOwned;
+use supports_hyperlinks::supports_hyperlinks;
 use url::Url;
 use winget_types::{
     Manifest, ManifestType, ManifestTypeWithLocale, PackageIdentifier, PackageVersion,
@@ -45,6 +46,7 @@ use crate::{
         },
     },
     manifests::Manifests,
+    terminal::Hyperlinkable,
     token::default_headers,
     traits::FromHtml,
     update_state::UpdateState,
@@ -544,10 +546,14 @@ impl GitHub {
         pr_progress.finish_and_clear();
 
         println!(
-            "{} created a pull request to remove {identifier} {version}",
+            "{} created a {} to {WINGET_PKGS_FULL_NAME}",
             "Successfully".green(),
+            "pull request".hyperlink(&pull_request_url)
         );
-        println!("{}", pull_request_url.as_str());
+        if !supports_hyperlinks() {
+            println!("{}", pull_request_url.as_str());
+        }
+
         Ok(pull_request_url)
     }
 

@@ -13,6 +13,7 @@ use futures_util::TryFutureExt;
 use indicatif::ProgressBar;
 use owo_colors::OwoColorize;
 use strsim::levenshtein;
+use supports_hyperlinks::supports_hyperlinks;
 use tokio::try_join;
 use winget_types::{
     PackageIdentifier, PackageVersion,
@@ -281,6 +282,9 @@ impl UpdateVersion {
             "Successfully".green(),
             "pull request".hyperlink(&pull_request_url)
         );
+        if !supports_hyperlinks() {
+            println!("{}", pull_request_url.as_str());
+        }
 
         if self.open_pr {
             open::that(pull_request_url.as_str())?;

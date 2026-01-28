@@ -8,6 +8,7 @@ use indicatif::ProgressBar;
 use inquire::MultiSelect;
 use itertools::Itertools;
 use owo_colors::OwoColorize;
+use supports_hyperlinks::supports_hyperlinks;
 use walkdir::WalkDir;
 use winget_types::{GenericManifest, ManifestType};
 
@@ -196,6 +197,9 @@ impl Submit {
                 "Successfully".green(),
                 "pull request".hyperlink(&pull_request_url)
             );
+            if !supports_hyperlinks() {
+                println!("{}", pull_request_url.as_str());
+            }
 
             if self.open_pr {
                 open::that(pull_request_url.as_str())?;
