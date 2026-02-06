@@ -1,11 +1,14 @@
-use std::fmt;
+use std::{fmt, ops::Deref};
 
 use color_eyre::Result;
 use inquire::Select;
+use tracing::error;
 use winget_types::{PackageIdentifier, PackageVersion};
 
 use crate::{
-    commands::utils::environment::VHS, editor::Editor, manifests::print_changes,
+    commands::utils::environment::{EDITOR, VHS},
+    editor::{Editor, edit_externally},
+    manifests::print_changes,
     prompts::handle_inquire_error,
 };
 
@@ -48,6 +51,13 @@ impl SubmitOption {
             };
 
             if submit_option.is_edit() {
+                if let Some(editor) = EDITOR.deref() {
+                    if let Err(err) = edit_externally(editor, changes) {
+                        error!("External editor failed to load: {err}");
+                        Editor::new(changes).run()?;
+                    }
+                    continue;
+                }
                 Editor::new(changes).run()?;
             } else {
                 break;
