@@ -1,5 +1,6 @@
-use std::{borrow::Cow, fmt::Display, io, ops::Add};
+use std::{borrow::Cow, fmt::Display, fs, io, ops::Add, process::Command};
 
+use camino::Utf8Path;
 use ratatui::{
     DefaultTerminal,
     layout::{Constraint, Direction, Layout},
@@ -7,7 +8,63 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
 };
+use thiserror::Error;
 use tui_textarea::{CursorMove, Input, Key, TextArea};
+
+#[derive(Debug, Error)]
+pub enum EditorError {
+    #[error("command is empty")]
+    CommandEmpty,
+    #[error("process exited with code {0}")]
+    NonZeroExit(i32),
+    #[error("process terminated by signal")]
+    SignalTermination(),
+    #[error(transparent)]
+    Io(#[from] io::Error),
+}
+
+pub fn edit_externally(
+    editor: Option<&str>,
+    changes: &mut [(String, String)],
+) -> Result<(), EditorError> {
+    let Some(editor) = editor else {
+        return Err(EditorError::CommandEmpty);
+    };
+
+    let temp_dir = tempfile::tempdir()?;
+
+    let file_paths: Vec<_> = changes
+        .iter()
+        .map(|(path, content)| {
+            let file_name = Utf8Path::new(path).file_name().unwrap_or(path.as_str());
+            let file_path = temp_dir.path().join(file_name);
+            fs::write(&file_path, content.as_bytes())?;
+            Ok(file_path)
+        })
+        .collect::<io::Result<_>>()?;
+
+    let mut parts = editor.split_whitespace();
+    let program = parts.next().ok_or(EditorError::CommandEmpty)?;
+
+    println!("Waiting for your editor to close the files...");
+    let status = Command::new(program)
+        .args(parts)
+        .args(&file_paths)
+        .status()?;
+
+    if !status.success() {
+        match status.code() {
+            Some(status) => return Err(EditorError::NonZeroExit(status)),
+            None => return Err(EditorError::SignalTermination()),
+        }
+    }
+
+    for (file_path, (_, content)) in file_paths.iter().zip(changes.iter_mut()) {
+        *content = fs::read_to_string(file_path)?;
+    }
+
+    Ok(())
+}
 
 struct SearchBox<'a> {
     textarea: TextArea<'a>,
