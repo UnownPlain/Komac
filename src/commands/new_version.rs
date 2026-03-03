@@ -274,7 +274,7 @@ impl NewVersion {
             installers.extend(analyser_installers);
         }
 
-        let default_locale = required_prompt(self.package_locale, None::<&str>)?;
+        let default_locale = required_prompt(self.package_locale, Some("en-US"))?;
         let mut installer_manifest = InstallerManifest {
             package_identifier: package_identifier.clone(),
             package_version: package_version.clone(),
