@@ -1,8 +1,8 @@
-use std::{fmt, num::NonZeroUsize};
+use std::{any::Any, fmt, num::NonZeroUsize};
 
 use chrono::DateTime;
 use color_eyre::{Result, eyre::bail};
-use futures_util::{StreamExt, TryStreamExt, stream};
+use futures_util::{FutureExt, StreamExt, TryStreamExt, stream};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use itertools::{Itertools, Position};
 use reqwest::{
@@ -22,6 +22,12 @@ use tokio::{
 use winget_types::Sha256String;
 
 use super::{Download, DownloadedFile};
+
+pub enum DownloadAttemptStatus {
+    Success(DownloadedFile),
+    Error(String),
+    Panic(String),
+}
 
 pub struct Downloader {
     client: Client,
@@ -92,6 +98,23 @@ impl Downloader {
         multi_progress.clear()?;
 
         Ok(downloaded_files)
+    }
+
+    pub async fn fetch_with_failure(
+        &self,
+        download: Download,
+        multi_progress: &MultiProgress,
+    ) -> DownloadAttemptStatus {
+        let result =
+            std::panic::AssertUnwindSafe(self.fetch(&self.client, download, multi_progress))
+                .catch_unwind()
+                .await;
+
+        match result {
+            Ok(Ok(downloaded_file)) => DownloadAttemptStatus::Success(downloaded_file),
+            Ok(Err(error)) => DownloadAttemptStatus::Error(error.to_string()),
+            Err(payload) => DownloadAttemptStatus::Panic(panic_payload_to_string(payload)),
+        }
     }
 
     fn headers() -> HeaderMap {
@@ -221,6 +244,16 @@ impl Downloader {
             file_name,
             last_modified,
         })
+    }
+}
+
+fn panic_payload_to_string(payload: Box<dyn Any + Send>) -> String {
+    if let Some(message) = payload.downcast_ref::<&'static str>() {
+        (*message).to_string()
+    } else if let Some(message) = payload.downcast_ref::<String>() {
+        message.clone()
+    } else {
+        String::from("Unknown panic payload")
     }
 }
 

@@ -1,0 +1,1592 @@
+{
+  "generatedAt": "2026-03-27T22:02:44.394998819Z",
+  "startedAt": "2026-03-27T21:11:09.526388605Z",
+  "durationMs": 3094868,
+  "wingetPkgsPath": ".",
+  "settings": {
+    "concurrentDownloads": 64,
+    "concurrentAnalysis": 16,
+    "concurrentManifestReads": 16
+  },
+  "totals": {
+    "installerManifestsFound": 127294,
+    "packagesAnalyzed": 12090,
+    "installerEntries": 19827,
+    "uniqueUrls": 17832,
+    "success": 3001,
+    "downloadErrors": 105,
+    "downloadPanics": 0,
+    "analysisErrors": 49,
+    "analysisPanics": 4,
+    "manifestErrors": 185,
+    "manifestPanics": 0
+  },
+  "manifestErrors": [
+    {
+      "manifestPath": "./winget-pkgs/manifests/r/RingCentral/RingCentralMeetingsRooms/24.3.10.462/RingCentral.RingCentralMeetingsRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 37 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/c/Comix/FastMeetingLauncher/1.0.1.4/Comix.FastMeetingLauncher.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 14 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.16.0.32735/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.17.0.42163/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.16.2.36295/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.17.1.47220/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.14.0.20607/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.16.0.31342/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/OwlLabs/MeetingOwl/4.8.1.166/OwlLabs.MeetingOwl.installer.yaml",
+      "message": "Installers[2].Capabilities[0]: \"runFullTrust\" is not a known capability at line 47 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/o/Omnissa/HorizonClient/8.15.0.24358/Omnissa.HorizonClient.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 18 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/accellence/vimaccProfessional/2.2.15.5/accellence.vimaccProfessional.installer.yaml",
+      "message": "InstallerSwitches.Interactive: Switch cannot be empty at line 11 column 20"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/accellence/vimaccProfessional/2.2.15.4/accellence.vimaccProfessional.installer.yaml",
+      "message": "InstallerSwitches.Interactive: Switch cannot be empty at line 11 column 20"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.8.26/AgileBits.1Password.installer.yaml",
+      "message": "Installers[0].Capabilities[1]: \"packageManagement\" is not a known capability at line 22 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.5.1/AgileBits.1Password.installer.yaml",
+      "message": "Installers[0].Capabilities[1]: \"packageManagement\" is not a known capability at line 22 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.2.37/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.20.39/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.10.37/AgileBits.1Password.installer.yaml",
+      "message": "Installers[3].Capabilities[1]: \"packageManagement\" is not a known capability at line 58 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.1.3/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.4.46/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.22.27/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.23.1/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.4.27/AgileBits.1Password.installer.yaml",
+      "message": "Installers[2].Capabilities[0]: \"runFullTrust\" is not a known capability at line 46 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.6.27/AgileBits.1Password.installer.yaml",
+      "message": "Installers[2].Capabilities[1]: \"packageManagement\" is not a known capability at line 44 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.8.40/AgileBits.1Password.installer.yaml",
+      "message": "Installers[2].Capabilities[1]: \"packageManagement\" is not a known capability at line 44 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.16.35/AgileBits.1Password.installer.yaml",
+      "message": "Installers[3].Capabilities[1]: \"packageManagement\" is not a known capability at line 58 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.14.24/AgileBits.1Password.installer.yaml",
+      "message": "Installers[3].Capabilities[1]: \"packageManagement\" is not a known capability at line 58 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.18.36/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.0.13/AgileBits.1Password.installer.yaml",
+      "message": "Installers[1].Capabilities[1]: \"packageManagement\" is not a known capability at line 30 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.12.6.39/AgileBits.1Password.installer.yaml",
+      "message": "Installers[0].Capabilities[1]: \"packageManagement\" is not a known capability at line 22 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/AgileBits/1Password/8.11.12.27/AgileBits.1Password.installer.yaml",
+      "message": "Installers[3].Capabilities[1]: \"packageManagement\" is not a known capability at line 58 column 5"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/Araxis/Merge/2025.1/Araxis.Merge.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `location`, expected `Log` or `Location` at line 40 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/Araxis/Merge/2025.0/Araxis.Merge.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `location`, expected `Log` or `Location` at line 40 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/a/Araxis/Merge/2024.6002/Araxis.Merge.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `location`, expected `Log` or `Location` at line 40 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/p/Potato/Browser/1.0.0/Potato.Browser.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Silent: Switch cannot be empty at line 13 column 13"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.4.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.146.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.138.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.141.6.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.147.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.149.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.141.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.143.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.147.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.152.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.148.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.7.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.149.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.5.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.141.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.145.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.151.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.144.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.144.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.144.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.143.5.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.150.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.143.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.141.4.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.151.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.145.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.144.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.6.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.147.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.141.7.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.151.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.139.0.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.139.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.139.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.150.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.142.9.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.140.6.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.147.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.145.1.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.147.4.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.143.4.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.146.2.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/d/DuckDuckGo/DesktopBrowser/Preview/0.140.3.0/DuckDuckGo.DesktopBrowser.Preview.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 21 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.3.1.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.7.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.6.1.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.3.0.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.3.3.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.2.4.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"runFullTrust\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.5.3.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.2.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.8.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.2.7.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.5.1.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.4.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.2.6.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.3.2.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.6.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.5.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.5.0.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.3.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.5.2.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.2.8.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.1.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/l/Learneo/LanguageTool/1.4.0.0/Learneo.LanguageTool.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.0.2.28022/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.0.0.27927/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.2.0.28648/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.2.1.28671/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.0.1.27950/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.0.4.28064/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.1.0.28309/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/i/Iterate/MountainDuck/5.1.1.28444/Iterate.MountainDuck.installer.yaml",
+      "message": "Capabilities[1]: \"packageManagement\" is not a known capability at line 24 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1200.10763.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1200.10742.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1200.10817.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1190.10656.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1200.10709.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1200.10839.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/26.380.11386.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/k/KDE/Kate/AppX/25.1190.10678.0/KDE.Kate.AppX.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 45 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.1.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.2.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.3.10/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.1.10/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.5.6/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.1.11/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.7.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.6.10/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.1.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.2.1/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.7.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.5.1/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/5.17.7/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 54 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.6.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.4.2/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.4.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.1.2/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.4.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.6.1/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.2.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.6.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.5.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.5.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/5.16.5/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 54 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.6.6/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[1].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.0.0/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 54 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/5.17.8/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 54 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/5.17.9/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 54 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/z/Zoom/ZoomRooms/6.0.6/Zoom.ZoomRooms.installer.yaml",
+      "message": "Installers[2].UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 47 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/m/Microsoft/DotNet/Runtime/2_2/2.2.8.28209/Microsoft.DotNet.Runtime.2_2.installer.yaml",
+      "message": "Installers[2].InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 35 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/m/Microsoft/UpdateAssistant/1.4.9200.23192/Microsoft.UpdateAssistant.installer.yaml",
+      "message": "InstallerSwitches.Silent: Switch cannot be empty at line 11 column 11"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/m/Microsoft/UpdateAssistant/1.4.9200.23367/Microsoft.UpdateAssistant.installer.yaml",
+      "message": "InstallerSwitches.Silent: Switch cannot be empty at line 11 column 11"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NSIS/NSIS/3.10/NSIS.NSIS.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 16 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NSIS/NSIS/3.09/NSIS.NSIS.installer.yaml",
+      "message": "UnsupportedArguments: unknown variant `log`, expected `Log` or `Location` at line 16 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.116.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.110.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.111.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.109.0.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 15 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.113.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.114.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.112.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.117.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/Nexusbird/Motion/0.115.0/Nexusbird.Motion.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 14 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NTKERNEL/WireSockVPNClient/2.4.16/NTKERNEL.WireSockVPNClient.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Interactive: Switch cannot be empty at line 19 column 18"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NTKERNEL/WireSockVPNClient/2.4.5/NTKERNEL.WireSockVPNClient.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Interactive: Switch cannot be empty at line 19 column 18"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NTKERNEL/WireSockVPNClient/2.2.3/NTKERNEL.WireSockVPNClient.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Interactive: Switch cannot be empty at line 19 column 18"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NTKERNEL/WireSockVPNClient/2.4.23/NTKERNEL.WireSockVPNClient.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Interactive: Switch cannot be empty at line 19 column 18"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/n/NTKERNEL/WireSockVPNClient/2.2.1/NTKERNEL.WireSockVPNClient.installer.yaml",
+      "message": "Installers[0].InstallerSwitches.Interactive: Switch cannot be empty at line 19 column 18"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SamsidParty/TopNotify/3.1.0.0/SamsidParty.TopNotify.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SamsidParty/TopNotify/3.1.1.0/SamsidParty.TopNotify.installer.yaml",
+      "message": "Capabilities[0]: \"runFullTrust\" is not a known capability at line 16 column 3"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/ShareFile/ShareFileForWindows/24.3.3.0/ShareFile.ShareFileForWindows.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 14 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/ShareFile/ShareFileForWindows/24.1.26.0/ShareFile.ShareFileForWindows.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 14 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.3/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.3.0/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.1/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.5/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.10.0/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.8/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.1.1/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.1.0/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.3.1/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.4/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.6/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.2.2/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.2.1/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.9/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/3.2.0/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    },
+    {
+      "manifestPath": "./winget-pkgs/manifests/s/SonicPi/SonicPi/2.7/SonicPi.SonicPi.installer.yaml",
+      "message": "InstallerSuccessCodes: data did not match any variant of untagged enum InstallerReturnCode at line 15 column 1"
+    }
+  ],
+  "manifestPanics": [],
+  "results": [
+    {
+      "url": "https://github.com/PCL-Community/PCL2-CE/releases/download/2.13.4/PCL2_CE_Release_ARM64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PCLCommunity/PCL2-CE/2.13.4/PCLCommunity.PCL2-CE.installer.yaml",
+          "packageIdentifier": "PCLCommunity.PCL2-CE",
+          "packageVersion": "2.13.4",
+          "architecture": "arm64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://dl.min.io/client/mc/release/windows-amd64/archive/mc.RELEASE.2025-07-16T15-35-03Z",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/m/MinIO/Client/2025.07.16/MinIO.Client.installer.yaml",
+          "packageIdentifier": "MinIO.Client",
+          "packageVersion": "2025.07.16",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"2025-07-16t15-35-03z\"",
+      "info": null
+    },
+    {
+      "url": "https://github.com/OpenRA/OpenRA/releases/download/playtest-20260222/OpenRA-playtest-20260222-x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/o/OpenRA/OpenRA/Playtest/2026.02.22/OpenRA.OpenRA.Playtest.installer.yaml",
+          "packageIdentifier": "OpenRA.OpenRA.Playtest",
+          "packageVersion": "2026.02.22",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://mirrors.cloud.tencent.com/nexus/repository/maven-public/org/glavo/hmcl/hmcl-stable/3.6.18/hmcl-stable-3.6.18.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/h/HMCL/HMCL/Stable/Maven/TencentCloudMirror/3.6.18/HMCL.HMCL.Stable.Maven.TencentCloudMirror.installer.yaml",
+          "packageIdentifier": "HMCL.HMCL.Stable.Maven.TencentCloudMirror",
+          "packageVersion": "3.6.18",
+          "architecture": "neutral",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://edge.elgato.com/egc/windows/drivers/hd60-s/Game_Capture_HD60_S_1.1.0.194.3.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/e/Elgato/GameCapture/HD60S/1.1.0.194/Elgato.GameCapture.HD60S.installer.yaml",
+          "packageIdentifier": "Elgato.GameCapture.HD60S",
+          "packageVersion": "1.1.0.194",
+          "architecture": "neutral",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_panic",
+      "message": "index out of bounds: the len is 6 but the index is 1233",
+      "info": null
+    },
+    {
+      "url": "https://dwnld.mindjet.com/stubs/Release/MindManager23/MindManager23_setup.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/c/Corel/MindManager/23/23.2.209.0/Corel.MindManager.23.installer.yaml",
+          "packageIdentifier": "Corel.MindManager.23",
+          "packageVersion": "23.2.209.0",
+          "architecture": "x64",
+          "installerType": "exe"
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://z-download.de/down4711/zcron.zip",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/z/Z-DBackup/Z-Cron/6.4.0.4/Z-DBackup.Z-Cron.installer.yaml",
+          "packageIdentifier": "Z-DBackup.Z-Cron",
+          "packageVersion": "6.4.0.4",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-X64.EXE",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/b/Bandisoft/BandiView/7.26/Bandisoft.BandiView.installer.yaml",
+          "packageIdentifier": "Bandisoft.BandiView",
+          "packageVersion": "7.26",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://cdn.zabbix.com/zabbix/binaries/stable/7.4/7.4.8/zabbix_agent2-7.4.8-windows-amd64-openssl.msi",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/z/Zabbix/Agent/2/7.4.8/Zabbix.Agent.2.installer.yaml",
+          "packageIdentifier": "Zabbix.Agent.2",
+          "packageVersion": "7.4.8",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Invalid field size for integer column (0)",
+      "info": null
+    },
+    {
+      "url": "https://a56.gdl.netease.com/UURemote_Setup_4.18.1.7343_0326201513_gwqd.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/n/NetEase/UURemote/4.18.1.7343/NetEase.UURemote.installer.yaml",
+          "packageIdentifier": "NetEase.UURemote",
+          "packageVersion": "4.18.1.7343",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "corrupt deflate stream",
+      "info": null
+    },
+    {
+      "url": "https://www.logiccircuit.org/downloads/LogicCircuit_32bit.2.25.06.10.zip",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/l/LogicCircuit/LogicCircuit/2.25.06.10/LogicCircuit.LogicCircuit.installer.yaml",
+          "packageIdentifier": "LogicCircuit.LogicCircuit",
+          "packageVersion": "2.25.06.10",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://imlizhi-store-https.seewo.com/EasiDirector_(20251017104702).exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/EasiDirector/1.2.2.294/Seewo.EasiDirector.installer.yaml",
+          "packageIdentifier": "Seewo.EasiDirector",
+          "packageVersion": "1.2.2.294",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://download.wondershare.com/cbs_down/pdfelement6-pro_full2990.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/w/Wondershare/PDFelement/6/Pro/6.8.9.4193/Wondershare.PDFelement.6.Pro.installer.yaml",
+          "packageIdentifier": "Wondershare.PDFelement.6.Pro",
+          "packageVersion": "6.8.9.4193",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "failed to fill whole buffer",
+      "info": null
+    },
+    {
+      "url": "https://airvpn.org/mirrors/eddie.website/download/?platform=windows&arch=x86&ui=ui&format=installer.exe&version=2.24.6",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/a/AirVPN/Eddie/2.24.6/AirVPN.Eddie.installer.yaml",
+          "packageIdentifier": "AirVPN.Eddie",
+          "packageVersion": "2.24.6",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"\"",
+      "info": null
+    },
+    {
+      "url": "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.1.3/libjpeg-turbo-3.1.3-vc-x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/l/libjpeg-turbo/libjpeg-turbo/VC/3.1.3/libjpeg-turbo.libjpeg-turbo.VC.installer.yaml",
+          "packageIdentifier": "libjpeg-turbo.libjpeg-turbo.VC",
+          "packageVersion": "3.1.3",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://imlizhi-store-https.seewo.com/EasirecorderSetup_1.1.0.694(20251103144530).exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/EasiRecorder/1.1.0.694/Seewo.EasiRecorder.installer.yaml",
+          "packageIdentifier": "Seewo.EasiRecorder",
+          "packageVersion": "1.1.0.694",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://imlizhi-store-https.seewo.com/EasiCare_PC_2.1.0.1428(20230612194454).exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/EasiCare/2.1.0.1428/Seewo.EasiCare.installer.yaml",
+          "packageIdentifier": "Seewo.EasiCare",
+          "packageVersion": "2.1.0.1428",
+          "architecture": "x86",
+          "installerType": "nullsoft"
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://download.3dvista.com/current/show/3DVVirtualTour_x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/3/3DVista/VirtualTour/2025.2.10/3DVista.VirtualTour.installer.yaml",
+          "packageIdentifier": "3DVista.VirtualTour",
+          "packageVersion": "2025.2.10",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://www.picotech.com/download/software/sr/PicoScope_7_TandM_7.2.10.7893.x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PicoTechnology/Picoscope/T&M/7.2.10.7893/PicoTechnology.Picoscope.T&M.installer.yaml",
+          "packageIdentifier": "PicoTechnology.Picoscope.T&M",
+          "packageVersion": "7.2.10.7893",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_panic",
+      "message": "Unexpected token: Some(Number(1))",
+      "info": null
+    },
+    {
+      "url": "https://download-cdn.jetbrains.com/resharper/dotUltimate.2021.2.EAP8/JetBrains.dotUltimate.2021.2.EAP8.Checked.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/j/JetBrains/ReSharper/EAP/2021.2 EAP 8/JetBrains.ReSharper.EAP.installer.yaml",
+          "packageIdentifier": "JetBrains.ReSharper.EAP",
+          "packageVersion": "2021.2 EAP 8",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://github.com/jamulussoftware/jamulus/releases/download/r3_11_0/jamulus_3.11.0_win.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/v/VolkerFischer/Jamulus/3.11.0/VolkerFischer.Jamulus.installer.yaml",
+          "packageIdentifier": "VolkerFischer.Jamulus",
+          "packageVersion": "3.11.0",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/DEV/ProductDocuments/SoftwareTools/xc16-v2.10-full-install-windows64-installer.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/m/Microchip/MPLABXC16CCompiler/2.10/Microchip.MPLABXC16CCompiler.installer.yaml",
+          "packageIdentifier": "Microchip.MPLABXC16CCompiler",
+          "packageVersion": "2.10",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://file.tickstep.com/winget/pkgs/aliyunpan/v0.3.7/aliyunpan-installer-0.3.7-x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/t/tickstep/aliyunpan/0.3.7/tickstep.aliyunpan.installer.yaml",
+          "packageIdentifier": "tickstep.aliyunpan",
+          "packageVersion": "0.3.7",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"\"",
+      "info": null
+    },
+    {
+      "url": "https://download.jetbrains.com/resharper/dotUltimate.2025.3.4/JetBrains.ReSharper.2025.3.4.web.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/j/JetBrains/ReSharper/2025.3.4/JetBrains.ReSharper.installer.yaml",
+          "packageIdentifier": "JetBrains.ReSharper",
+          "packageVersion": "2025.3.4",
+          "architecture": "x64",
+          "installerType": null
+        },
+        {
+          "manifestPath": "./winget-pkgs/manifests/j/JetBrains/ReSharper/2025.3.4/JetBrains.ReSharper.installer.yaml",
+          "packageIdentifier": "JetBrains.ReSharper",
+          "packageVersion": "2025.3.4",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://downloads.zermelo.nl/programmas/zermelo64-26-02-1-setup.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/z/ZermeloSoftwareBV/ZermeloDesktop/26.02.1/ZermeloSoftwareBV.ZermeloDesktop.installer.yaml",
+          "packageIdentifier": "ZermeloSoftwareBV.ZermeloDesktop",
+          "packageVersion": "26.02.1",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://contents.baka.zone/Release/BakaXL_Public_Ver_3.5.1.0.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/b/BakaXL/BakaXL/3.5.1.0/BakaXL.BakaXL.installer.yaml",
+          "packageIdentifier": "BakaXL.BakaXL",
+          "packageVersion": "3.5.1.0",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "SectionReader end is before start",
+      "info": null
+    },
+    {
+      "url": "https://dl.ocbase.com/per/stable/OCCT.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/o/OCBase/OCCT/Personal/16.0.2/OCBase.OCCT.Personal.installer.yaml",
+          "packageIdentifier": "OCBase.OCCT.Personal",
+          "packageVersion": "16.0.2",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://github.com/machinewrapped/SmartCopy2026/releases/download/v2.0.9/SmartCopy-2.0.9-win-x64.zip",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/m/machinewrapped/SmartCopy/2.0.9/machinewrapped.SmartCopy.installer.yaml",
+          "packageIdentifier": "machinewrapped.SmartCopy",
+          "packageVersion": "2.0.9",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://reshade.me/downloads/ReShade_Setup_6.6.2_Addon.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/r/Reshade/Setup/AddonsSupport/6.6.2/Reshade.Setup.AddonsSupport.installer.yaml",
+          "packageIdentifier": "Reshade.Setup.AddonsSupport",
+          "packageVersion": "6.6.2",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://www.picoauto.com/download/software/sr/PicoScope_7_Automotive_7.2.10.7895.x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PicoTechnology/Picoscope/Automotive/7.2.10.7895/PicoTechnology.Picoscope.Automotive.installer.yaml",
+          "packageIdentifier": "PicoTechnology.Picoscope.Automotive",
+          "packageVersion": "7.2.10.7895",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_panic",
+      "message": "Unexpected token: Some(Number(1))",
+      "info": null
+    },
+    {
+      "url": "https://get.enterprisedb.com/postgresql/postgresql-12.22-1-windows-x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PostgreSQL/PostgreSQL/12/12.22-1/PostgreSQL.PostgreSQL.12.installer.yaml",
+          "packageIdentifier": "PostgreSQL.PostgreSQL.12",
+          "packageVersion": "12.22-1",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://github.com/tarcode-apps/BatteryMode/releases/download/v4.3.2.204/BatteryModeInstaller64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/t/TarasovArtyom/BatteryMode/4.3.2.204/TarasovArtyom.BatteryMode.installer.yaml",
+          "packageIdentifier": "TarasovArtyom.BatteryMode",
+          "packageVersion": "4.3.2.204",
+          "architecture": "x64",
+          "installerType": "inno"
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: inno::header::privilege_level::PrivilegeLevel",
+      "info": null
+    },
+    {
+      "url": "https://dl.eviware.com/virtserver/3.31.0/VirtServer-x64-3.31.0.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/SmartBear/ReadyAPIVirtServer/3.31.0/SmartBear.ReadyAPIVirtServer.installer.yaml",
+          "packageIdentifier": "SmartBear.ReadyAPIVirtServer",
+          "packageVersion": "3.31.0",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://imlizhi-store-https.seewo.com/EasiClassPC_2.1.22.6722(20260324155915).exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/EasiClass/1.0.0.2/Seewo.EasiClass.installer.yaml",
+          "packageIdentifier": "Seewo.EasiClass",
+          "packageVersion": "1.0.0.2",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://happytalk.io/desktop_app/download/windows",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/m/MBISolution/happytalk/0.2.0/MBISolution.happytalk.installer.yaml",
+          "packageIdentifier": "MBISolution.happytalk",
+          "packageVersion": "0.2.0",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"\"",
+      "info": null
+    },
+    {
+      "url": "https://github.com/direnv/direnv/releases/download/v2.37.1/direnv.windows-arm64",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/d/direnv/direnv/2.37.1/direnv.direnv.installer.yaml",
+          "packageIdentifier": "direnv.direnv",
+          "packageVersion": "2.37.1",
+          "architecture": "arm64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"windows-arm64\"",
+      "info": null
+    },
+    {
+      "url": "https://sourceforge.net/projects/catacombae/files/HFSExplorer/2021.10.9/hfsexplorer-2021.10.9-setup.exe/download",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/c/Catacombae/HFSExplorer/2021.10.9/Catacombae.HFSExplorer.installer.yaml",
+          "packageIdentifier": "Catacombae.HFSExplorer",
+          "packageVersion": "2021.10.9",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://sourceforge.net/projects/virtualgl/files/3.0.1/VirtualGL-Utils-3.0.1-x86.exe/download",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/v/VirtualGL/VirtualGL/3.0.1/VirtualGL.VirtualGL.installer.yaml",
+          "packageIdentifier": "VirtualGL.VirtualGL",
+          "packageVersion": "3.0.1",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://github.com/Corsinvest/cv4pve-vdi/releases/download/v1.3.0/cv4pve-vdi.exe-win-x64.zip",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/c/Corsinvest/cv4pve/vdi/1.3.0/Corsinvest.cv4pve.vdi.installer.yaml",
+          "packageIdentifier": "Corsinvest.cv4pve.vdi",
+          "packageVersion": "1.3.0",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://download.ccleaner.com/rcsetup154.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/Piriform/Recuva/1.54.120/Piriform.Recuva.installer.yaml",
+          "packageIdentifier": "Piriform.Recuva",
+          "packageVersion": "1.54.120",
+          "architecture": "x86",
+          "installerType": null
+        },
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/Piriform/Recuva/1.54.120/Piriform.Recuva.installer.yaml",
+          "packageIdentifier": "Piriform.Recuva",
+          "packageVersion": "1.54.120",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_panic",
+      "message": "called `Option::unwrap()` on a `None` value",
+      "info": null
+    },
+    {
+      "url": "https://get.enterprisedb.com/postgresql/postgresql-13.23-1-windows-x64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PostgreSQL/PostgreSQL/13/13.23-1/PostgreSQL.PostgreSQL.13.installer.yaml",
+          "packageIdentifier": "PostgreSQL.PostgreSQL.13",
+          "packageVersion": "13.23-1",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://store-g1.seewo.com/seewo-report_622ae27c0a994b4e8109c90ff723ced6?attname=SeewoBrowser_x86_2.0.10.3573.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/SeewoBrowser/2.0.10.3573/Seewo.SeewoBrowser.installer.yaml",
+          "packageIdentifier": "Seewo.SeewoBrowser",
+          "packageVersion": "2.0.10.3573",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "Unsupported file extension: \"\"",
+      "info": null
+    },
+    {
+      "url": "https://github.com/erlang/otp/releases/download/OTP-28.4.1/otp_win32_28.4.1.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/e/Erlang/ErlangOTP/28.4.1/Erlang.ErlangOTP.installer.yaml",
+          "packageIdentifier": "Erlang.ErlangOTP",
+          "packageVersion": "28.4.1",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "bzip2: bz2 header missing",
+      "info": null
+    },
+    {
+      "url": "https://download.qoppa.com/pdfstudio/v2024/PDFStudio_v2024_0_1_win32.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/q/Qoppa/PDFStudio/2024.0.1/Qoppa.PDFStudio.installer.yaml",
+          "packageIdentifier": "Qoppa.PDFStudio",
+          "packageVersion": "2024.0.1",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://download2.veeam.com/VAW/v13/VeeamAgentWindows_13.0.2.1102_wg.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/v/Veeam/VeeamAgent/13.0.2.1102/Veeam.VeeamAgent.installer.yaml",
+          "packageIdentifier": "Veeam.VeeamAgent",
+          "packageVersion": "13.0.2.1102",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://download.jetbrains.com/resharper/dotUltimate.2025.3.4/JetBrains.dotTrace.2025.3.4.web.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/j/JetBrains/dotTrace/2025.3.4/JetBrains.dotTrace.installer.yaml",
+          "packageIdentifier": "JetBrains.dotTrace",
+          "packageVersion": "2025.3.4",
+          "architecture": "x64",
+          "installerType": null
+        },
+        {
+          "manifestPath": "./winget-pkgs/manifests/j/JetBrains/dotTrace/2025.3.4/JetBrains.dotTrace.installer.yaml",
+          "packageIdentifier": "JetBrains.dotTrace",
+          "packageVersion": "2025.3.4",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://e.seewo.com/download/file?code=seewoinput&&version=1.0.7",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/SeewoInput/1.0.7.614/Seewo.SeewoInput.installer.yaml",
+          "packageIdentifier": "Seewo.SeewoInput",
+          "packageVersion": "1.0.7.614",
+          "architecture": "x86",
+          "installerType": null
+        },
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/SeewoInput/1.0.7.614/Seewo.SeewoInput.installer.yaml",
+          "packageIdentifier": "Seewo.SeewoInput",
+          "packageVersion": "1.0.7.614",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://reshade.me/downloads/ReShade_Setup_6.6.2.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/r/Reshade/Setup/6.6.2/Reshade.Setup.installer.yaml",
+          "packageIdentifier": "Reshade.Setup",
+          "packageVersion": "6.6.2",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://r2-app.eagle.cool/releases/Eagle-4.0-x64-build22.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/o/ogdesign/Eagle/4.0.0.41/ogdesign.Eagle.installer.yaml",
+          "packageIdentifier": "ogdesign.Eagle",
+          "packageVersion": "4.0.0.41",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    },
+    {
+      "url": "https://getpdfstudio.xodo.com/xodopdfstudio/XodoPDFStudio_win64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/a/Apryse/XodoPDFStudio/2025.3.0/Apryse.XodoPDFStudio.installer.yaml",
+          "packageIdentifier": "Apryse.XodoPDFStudio",
+          "packageVersion": "2025.3.0",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://github.com/PCL-Community/PCL2-CE/releases/download/2.13.0-beta.1/PCL2_CE_Beta_ARM64.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/p/PCLCommunity/PCL2-CE/Beta/2.13.0-beta.1/PCLCommunity.PCL2-CE.Beta.installer.yaml",
+          "packageIdentifier": "PCLCommunity.PCL2-CE.Beta",
+          "packageVersion": "2.13.0-beta.1",
+          "architecture": "arm64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://archives.oxygenxml.com/Oxygen/Chemistry/InstData28.1/oxygen-pdf-chemistry.exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/SyncROSoft/OxygenPDFChemistry/28.1/SyncROSoft.OxygenPDFChemistry.installer.yaml",
+          "packageIdentifier": "SyncROSoft.OxygenPDFChemistry",
+          "packageVersion": "28.1",
+          "architecture": "x64",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "No nuspec found in nupkg",
+      "info": null
+    },
+    {
+      "url": "https://imlizhi-store-https.seewo.com/SeewoYiQiXueStudent_1.3.15.4527(20260227133608).exe",
+      "references": [
+        {
+          "manifestPath": "./winget-pkgs/manifests/s/Seewo/SeewoYiQiXueStudent/1.3.15.4527/Seewo.SeewoYiQiXueStudent.installer.yaml",
+          "packageIdentifier": "Seewo.SeewoYiQiXueStudent",
+          "packageVersion": "1.3.15.4527",
+          "architecture": "x86",
+          "installerType": null
+        }
+      ],
+      "status": "analysis_error",
+      "message": "The conversion failed because the source bytes are not a valid value of the destination type.\n\nDestination type: [komac::analysis::installers::nsis::entry::Entry]",
+      "info": null
+    }
+  ]
+}

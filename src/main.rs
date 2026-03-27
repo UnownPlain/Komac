@@ -9,6 +9,7 @@ use tracing_subscriber::{filter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::commands::{
     analyze::Analyze,
+    analyze_winget_pkgs::AnalyzeWingetPkgs,
     cleanup::Cleanup,
     complete::Complete,
     list_versions::ListVersions,
@@ -59,6 +60,7 @@ async fn main() -> Result<()> {
         Commands::Sync(sync_fork) => sync_fork.run().await,
         Commands::Complete(complete) => complete.run(),
         Commands::Analyze(analyse) => analyse.run(),
+        Commands::AnalyzeWingetPkgs(analyze_winget_pkgs) => analyze_winget_pkgs.run().await,
         Commands::RemoveDeadVersions(remove_dead_versions) => remove_dead_versions.run().await,
         Commands::Submit(submit) => submit.run().await,
     }
@@ -104,6 +106,7 @@ enum Commands {
     Sync(SyncFork),
     Complete(Complete),
     Analyze(Analyze),
+    AnalyzeWingetPkgs(AnalyzeWingetPkgs),
     RemoveDeadVersions(RemoveDeadVersions),
     Submit(Submit),
 }
