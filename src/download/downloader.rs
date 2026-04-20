@@ -1,10 +1,10 @@
 use std::{fmt, num::NonZeroUsize};
 
-use chrono::DateTime;
 use color_eyre::{Result, eyre::bail};
 use futures_util::{StreamExt, TryStreamExt, stream};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use itertools::{Itertools, Position};
+use jiff::fmt::rfc2822;
 use reqwest::{
     Client,
     header::{
@@ -153,8 +153,8 @@ impl Downloader {
             .headers()
             .get(LAST_MODIFIED)
             .and_then(|last_modified| last_modified.to_str().ok())
-            .and_then(|last_modified| DateTime::parse_from_rfc2822(last_modified).ok())
-            .map(|date_time| date_time.date_naive());
+            .and_then(|last_modified| rfc2822::parse(last_modified).ok())
+            .map(|date_time| date_time.date());
 
         let progress_bar = match res.content_length() {
             Some(len) => ProgressBar::new(len).with_style(

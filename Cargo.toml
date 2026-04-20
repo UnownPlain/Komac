@@ -43,7 +43,6 @@ bytes = "1.11.1"
 bzip2 = "0.6.1"
 cab = "0.6.0"
 camino = { version = "1.2.2", features = ["serde1"] }
-chrono = { version = "0.4.44", features = ["serde"] }
 clap = { version = "4.6.1", features = ["derive", "cargo", "env"] }
 clap_complete = "4.6.2"
 codepage = "0.1.2"
@@ -64,11 +63,12 @@ inno = { version = "0.4.2", features = ["lzma-static"] }
 inquire = "0.9.4"
 itertools = "0.14.0"
 itoa = "1.0.18"
+jiff = { version = "0.2.23", features = ["serde"] }
 keyring-core = "0.7.4"
 liblzma = { version = "0.4.6", features = ["static"] }
 memchr = "2.8.0"
 msi = "0.10.0"
-nt-time = { version = "0.13.1", features = ["chrono"] }
+nt-time = { version = "0.13.1", features = ["jiff"] }
 num_cpus = "1.17.0"
 open = "5.3.3"
 ordinal = "0.4.0"
@@ -100,7 +100,7 @@ typed-path = "0.12.3"
 url = { version = "2.5.8", features = ["serde"] }
 uuid = { version = "1.23.1", features = ["v4"] }
 walkdir = "2.5.0"
-winget-types = { version = "0.4.3", features = ["serde", "std", "chrono"] }
+winget-types = { version = "0.4.3", features = ["serde", "std", "jiff"] }
 zerocopy = { version = "0.8.48", features = ["derive", "std"] }
 zip = { version = "8.5.1", default-features = false, features = ["deflate"] }
 

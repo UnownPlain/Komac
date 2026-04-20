@@ -6,10 +6,10 @@ use std::time::Duration;
 
 use anstream::println;
 use camino::Utf8Path;
-use chrono::Local;
 use color_eyre::Result;
 use futures_util::{StreamExt, TryStreamExt, stream};
 use inquire::error::InquireResult;
+use jiff::tz::TimeZone;
 use owo_colors::OwoColorize;
 pub use rate_limit::RateLimit;
 pub use submit_option::SubmitOption;
@@ -30,11 +30,11 @@ pub fn prompt_existing_pull_request(
     version: &PackageVersion,
     pull_request: &PullRequest,
 ) -> InquireResult<bool> {
-    let created_at = pull_request.created_at.with_timezone(&Local);
+    let created_at = pull_request.created_at.to_zoned(TimeZone::system());
     println!(
         "There is already {} pull request for {identifier} {version} that was created on {} at {}",
         pull_request.state,
-        created_at.date_naive(),
+        created_at.date(),
         created_at.time()
     );
     println!("{}", pull_request.url.blue());
