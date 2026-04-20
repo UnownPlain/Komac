@@ -1,5 +1,5 @@
-use chrono::{DateTime, Utc};
 use cynic::{QueryBuilder, http::ReqwestExt};
+use jiff::Timestamp;
 use url::Url;
 use winget_types::{PackageIdentifier, PackageVersion};
 
@@ -41,7 +41,7 @@ pub struct PullRequest {
     pub title: String,
     pub url: Url,
     pub state: PullRequestState,
-    pub created_at: DateTime<Utc>,
+    pub created_at: Timestamp,
 }
 
 impl PullRequest {
