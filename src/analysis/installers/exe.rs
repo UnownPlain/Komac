@@ -1,4 +1,7 @@
-use std::io::{Read, Seek};
+use std::{
+    collections::BTreeSet,
+    io::{Read, Seek},
+};
 
 use color_eyre::Result;
 use inno::{Inno, error::InnoError};
@@ -131,6 +134,29 @@ impl Exe {
             product_name,
             company_name,
         })
+    }
+
+    pub fn installer_type_labels(&self) -> Vec<String> {
+        match &self.r#type {
+            ExeType::Squirrel(squirrel) => {
+                vec![if squirrel.is_velopack {
+                    String::from("velopack")
+                } else {
+                    String::from("squirrel")
+                }]
+            }
+            _ => self
+                .installers()
+                .into_iter()
+                .filter_map(|installer| {
+                    installer
+                        .r#type
+                        .map(|installer_type| installer_type.to_string())
+                })
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect(),
+        }
     }
 }
 

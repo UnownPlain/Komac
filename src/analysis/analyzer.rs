@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeSet,
     io::{Read, Seek},
     mem,
 };
@@ -25,6 +26,7 @@ pub struct Analyzer<'reader, R: Read + Seek> {
     pub package_name: Option<PackageName>,
     pub publisher: Option<Publisher>,
     pub installers: Vec<Installer>,
+    pub installer_type_labels: Vec<String>,
     pub zip: Option<Zip<&'reader mut R>>,
 }
 
@@ -42,16 +44,20 @@ impl<'reader, R: Read + Seek> Analyzer<'reader, R> {
             ZIP => {
                 let mut scoped_zip = Zip::new(reader)?;
                 let installers = mem::take(&mut scoped_zip.installers);
+                let installer_type_labels = installer_type_labels(&installers);
                 return Ok(Self {
                     installers,
+                    installer_type_labels,
                     zip: Some(scoped_zip),
                     ..Self::default()
                 });
             }
             EXE => {
                 let mut exe = Exe::new(reader)?;
+                let installer_type_labels = exe.installer_type_labels();
                 return Ok(Self {
                     installers: exe.installers(),
+                    installer_type_labels,
                     copyright: exe
                         .legal_copyright
                         .take()
@@ -69,8 +75,10 @@ impl<'reader, R: Read + Seek> Analyzer<'reader, R> {
             }
             _ => bail!(r#"Unsupported file extension: "{extension}""#),
         };
+        let installer_type_labels = installer_type_labels(&installers);
         Ok(Self {
             installers,
+            installer_type_labels,
             ..Self::default()
         })
     }
@@ -84,7 +92,21 @@ impl<R: Read + Seek> Default for Analyzer<'_, R> {
             package_name: None,
             publisher: None,
             installers: Vec::default(),
+            installer_type_labels: Vec::default(),
             zip: None,
         }
     }
+}
+
+fn installer_type_labels(installers: &[Installer]) -> Vec<String> {
+    installers
+        .iter()
+        .filter_map(|installer| {
+            installer
+                .r#type
+                .map(|installer_type| installer_type.to_string())
+        })
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
 }

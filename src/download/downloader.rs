@@ -1,8 +1,13 @@
-use std::{fmt, num::NonZeroUsize};
+use std::{
+    any::Any,
+    fmt,
+    num::NonZeroUsize,
+    time::{Duration, Instant},
+};
 
 use chrono::DateTime;
 use color_eyre::{Result, eyre::bail};
-use futures_util::{StreamExt, TryStreamExt, stream};
+use futures_util::{FutureExt, StreamExt, TryStreamExt, stream};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use itertools::{Itertools, Position};
 use reqwest::{
@@ -22,6 +27,19 @@ use tokio::{
 use winget_types::Sha256String;
 
 use super::{Download, DownloadedFile};
+
+pub enum DownloadAttemptStatus {
+    Success(DownloadedFile),
+    Cancelled(String),
+    Error(String),
+    Panic(String),
+}
+
+#[derive(Clone, Copy)]
+pub struct SlowDownloadPolicy {
+    pub evaluate_after: Duration,
+    pub max_projected_total: Duration,
+}
 
 pub struct Downloader {
     client: Client,
@@ -84,7 +102,7 @@ impl Downloader {
         let multi_progress = MultiProgress::new();
 
         let downloaded_files = stream::iter(downloads.into_iter().map(D::into).unique())
-            .map(|download| self.fetch(&self.client, download, &multi_progress))
+            .map(|download| self.fetch(&self.client, download, &multi_progress, None))
             .buffer_unordered(self.concurrent_downloads.get())
             .try_collect::<Vec<_>>()
             .await?;
@@ -92,6 +110,35 @@ impl Downloader {
         multi_progress.clear()?;
 
         Ok(downloaded_files)
+    }
+
+    pub async fn fetch_with_failure(
+        &self,
+        download: Download,
+        multi_progress: &MultiProgress,
+        slow_download_policy: Option<SlowDownloadPolicy>,
+    ) -> DownloadAttemptStatus {
+        let result = std::panic::AssertUnwindSafe(self.fetch(
+            &self.client,
+            download,
+            multi_progress,
+            slow_download_policy,
+        ))
+        .catch_unwind()
+        .await;
+
+        match result {
+            Ok(Ok(downloaded_file)) => DownloadAttemptStatus::Success(downloaded_file),
+            Ok(Err(error)) => {
+                let message = error.to_string();
+                if error.downcast_ref::<SlowDownloadCancelledError>().is_some() {
+                    DownloadAttemptStatus::Cancelled(message)
+                } else {
+                    DownloadAttemptStatus::Error(message)
+                }
+            }
+            Err(payload) => DownloadAttemptStatus::Panic(panic_payload_to_string(payload)),
+        }
     }
 
     fn headers() -> HeaderMap {
@@ -127,6 +174,7 @@ impl Downloader {
         client: &Client,
         mut download: Download,
         multi_progress: &MultiProgress,
+        slow_download_policy: Option<SlowDownloadPolicy>,
     ) -> Result<DownloadedFile> {
         download.convert_to_github_versioned().await?;
 
@@ -156,7 +204,8 @@ impl Downloader {
             .and_then(|last_modified| DateTime::parse_from_rfc2822(last_modified).ok())
             .map(|date_time| date_time.date_naive());
 
-        let progress_bar = match res.content_length() {
+        let content_length = res.content_length();
+        let progress_bar = match content_length {
             Some(len) => ProgressBar::new(len).with_style(
                 ProgressStyle::with_template(Self::PROGRESS_TEMPLATE)?
                     .progress_chars(Self::PROGRESS_CHARS),
@@ -196,10 +245,41 @@ impl Downloader {
         });
 
         let mut stream = res.bytes_stream();
+        let mut downloaded_bytes = 0u64;
+        let download_started = Instant::now();
 
         // Download the chunks asynchronously
         while let Some(chunk) = stream.next().await.transpose()? {
-            progress.inc(chunk.len() as u64);
+            let chunk_len = chunk.len() as u64;
+            downloaded_bytes += chunk_len;
+            progress.inc(chunk_len);
+
+            if let (Some(policy), Some(total_bytes)) = (slow_download_policy, content_length)
+                && downloaded_bytes > 0
+            {
+                let elapsed = download_started.elapsed();
+                if elapsed >= policy.evaluate_after {
+                    let elapsed_secs = elapsed.as_secs_f64();
+                    let projected_total_secs =
+                        elapsed_secs * (total_bytes as f64) / (downloaded_bytes as f64);
+
+                    if projected_total_secs > policy.max_projected_total.as_secs_f64() {
+                        drop(write_sender);
+                        drop(hash_sender);
+
+                        let message = format!(
+                            "Download cancelled after {:.1}s: projected total {:.1}s exceeds {:.1}s",
+                            elapsed_secs,
+                            projected_total_secs,
+                            policy.max_projected_total.as_secs_f64(),
+                        );
+
+                        progress.finish_with_message(message.clone());
+                        return Err(SlowDownloadCancelledError::new(message).into());
+                    }
+                }
+            }
+
             hash_sender.send(chunk.clone())?;
             write_sender.send(chunk)?;
         }
@@ -221,6 +301,28 @@ impl Downloader {
             file_name,
             last_modified,
         })
+    }
+}
+
+#[derive(Debug, Error)]
+#[error("{message}")]
+struct SlowDownloadCancelledError {
+    message: String,
+}
+
+impl SlowDownloadCancelledError {
+    fn new(message: String) -> Self {
+        Self { message }
+    }
+}
+
+fn panic_payload_to_string(payload: Box<dyn Any + Send>) -> String {
+    if let Some(message) = payload.downcast_ref::<&'static str>() {
+        (*message).to_string()
+    } else if let Some(message) = payload.downcast_ref::<String>() {
+        message.clone()
+    } else {
+        String::from("Unknown panic payload")
     }
 }
 

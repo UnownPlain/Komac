@@ -1,0 +1,1 @@
+until cargo run --release analyze-winget-pkgs --resume-from installer-analysis-report.json; do sleep 2; done

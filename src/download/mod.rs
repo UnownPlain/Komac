@@ -5,7 +5,9 @@ use std::{borrow::Cow, fmt};
 
 use camino::Utf8Path;
 use const_format::formatcp;
+pub use downloader::DownloadAttemptStatus;
 pub use downloader::Downloader;
+pub use downloader::SlowDownloadPolicy;
 pub use file::DownloadedFile;
 use reqwest::{Client, ClientBuilder, Response, header::HeaderValue, redirect::Policy};
 use uuid::Uuid;

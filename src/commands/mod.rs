@@ -1,4 +1,5 @@
 pub mod analyze;
+pub mod analyze_winget_pkgs;
 pub mod cleanup;
 pub mod complete;
 pub mod list_versions;
