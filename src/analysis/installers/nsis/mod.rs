@@ -52,12 +52,17 @@ use crate::{
     traits::{FromMachine, IntoWingetArchitecture},
 };
 
+pub struct NsisExecutionError {
+    pub is_infinite_loop: bool,
+}
+
 const APP_32: &str = "app-32";
 const APP_64: &str = "app-64";
 
 pub struct Nsis {
     pub architecture: Architecture,
     pub is_portable: bool,
+    pub execution_errors: Vec<NsisExecutionError>,
     pub registry: Registry,
     pub primary_language_id: u16,
     pub install_directory: Option<Utf8WindowsPathBuf>,
@@ -98,12 +103,13 @@ impl Nsis {
         debug!(?header);
 
         let mut state = NsisState::new(&decompressed_data, &header, manifest.as_deref())?;
+        let mut execution_errors = Vec::new();
 
         // https://nsis.sourceforge.io/Reference/.onInit
         if header.code_on_init() != -1 {
             debug!("Simulating code execution for .onInit callback");
             if let Err(invalid_entry) = state.execute_code_segment(header.code_on_init()) {
-                error!(%invalid_entry);
+                Self::record_execution_error(&mut execution_errors, invalid_entry);
             }
         }
 
@@ -114,7 +120,9 @@ impl Nsis {
             );
             match state.execute_code_segment(section.code_offset()) {
                 Ok(Entry::Quit) => break,
-                Err(invalid_entry) => error!(%invalid_entry),
+                Err(invalid_entry) => {
+                    Self::record_execution_error(&mut execution_errors, invalid_entry);
+                }
                 _ => {}
             }
         }
@@ -122,9 +130,8 @@ impl Nsis {
         // https://nsis.sourceforge.io/Reference/.onInstSuccess
         if header.code_on_inst_success() != -1 {
             debug!("Simulating code execution for .onInstSuccess callback");
-            match state.execute_code_segment(header.code_on_inst_success()) {
-                Err(EntryError::Abort { .. }) | Ok(..) => {}
-                Err(invalid_entry) => error!(%invalid_entry),
+            if let Err(invalid_entry) = state.execute_code_segment(header.code_on_inst_success()) {
+                Self::record_execution_error(&mut execution_errors, invalid_entry);
             }
         }
 
@@ -208,6 +215,7 @@ impl Nsis {
         Ok(Self {
             architecture: architecture.unwrap_or(Architecture::X86),
             is_portable: state.is_portable(),
+            execution_errors,
             registry: state.registry,
             install_directory: state
                 .variables
@@ -215,6 +223,19 @@ impl Nsis {
                 .map(Utf8WindowsPath::to_path_buf),
             primary_language_id: state.language_table.id(),
         })
+    }
+
+    fn record_execution_error(errors: &mut Vec<NsisExecutionError>, error: EntryError) {
+        error!(%error);
+        errors.push(NsisExecutionError {
+            is_infinite_loop: error == EntryError::InfiniteLoop,
+        });
+    }
+
+    pub fn has_infinite_loop(&self) -> bool {
+        self.execution_errors
+            .iter()
+            .any(|error| error.is_infinite_loop)
     }
 
     pub fn display_name(&self) -> Option<&registry::Value> {

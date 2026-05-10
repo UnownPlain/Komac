@@ -10,6 +10,7 @@ use tracing_subscriber::{filter, layer::SubscriberExt, util::SubscriberInitExt};
 use crate::{
     commands::{
         analyze::Analyze,
+        analyze_winpkgs::AnalyzeWinPkgs,
         cleanup::Cleanup,
         complete::Complete,
         list_versions::ListVersions,
@@ -46,9 +47,10 @@ async fn main() -> Result<()> {
         .display_env_section(false)
         .install()?;
 
-    setup_logging();
+    let cli = Cli::parse();
+    setup_logging(matches!(cli.command, Commands::AnalyzeWinPkgs(_)));
 
-    match Cli::parse().command {
+    match cli.command {
         Commands::New(new_version) => new_version.run().await,
         Commands::Update(update_version) => update_version.run().await,
         Commands::Cleanup(cleanup) => cleanup.run().await,
@@ -62,6 +64,7 @@ async fn main() -> Result<()> {
         Commands::Sync(sync_fork) => sync_fork.run().await,
         Commands::Complete(complete) => complete.run(),
         Commands::Analyze(analyse) => analyse.run(),
+        Commands::AnalyzeWinPkgs(analyze_winpkgs) => analyze_winpkgs.run().await,
         Commands::RemoveDeadVersions(remove_dead_versions) => remove_dead_versions.run().await,
         Commands::Submit(submit) => submit.run().await,
     }?;
@@ -71,8 +74,13 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-fn setup_logging() {
+fn setup_logging(quiet: bool) {
     let indicatif_layer = IndicatifLayer::new();
+    let crate_level = if quiet {
+        LevelFilter::OFF
+    } else {
+        LevelFilter::from_level(Level::TRACE)
+    };
 
     tracing_subscriber::registry()
         .with(
@@ -85,7 +93,7 @@ fn setup_logging() {
         .with(
             filter::Targets::new()
                 .with_default(LevelFilter::INFO)
-                .with_target(crate_name!(), Level::TRACE),
+                .with_target(crate_name!(), crate_level),
         )
         .init();
 }
@@ -111,6 +119,8 @@ enum Commands {
     Sync(SyncFork),
     Complete(Complete),
     Analyze(Analyze),
+    #[command(name = "analyze-winpkgs")]
+    AnalyzeWinPkgs(AnalyzeWinPkgs),
     RemoveDeadVersions(RemoveDeadVersions),
     Submit(Submit),
 }

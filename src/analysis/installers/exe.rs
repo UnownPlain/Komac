@@ -6,12 +6,15 @@ use winget_types::installer::{Installer, InstallerType};
 
 use super::{super::Installers, AdvancedInstaller, Burn, Nsis, Squirrel};
 use crate::{
-    analysis::installers::{
-        advanced::AdvancedInstallerError,
-        burn::BurnError,
-        nsis::NsisError,
-        pe::{PE, VSVersionInfo},
-        squirrel::SquirrelError,
+    analysis::{
+        InstallerAnalysisKind,
+        installers::{
+            advanced::AdvancedInstallerError,
+            burn::BurnError,
+            nsis::NsisError,
+            pe::{PE, VSVersionInfo},
+            squirrel::SquirrelError,
+        },
     },
     traits::IntoWingetArchitecture,
 };
@@ -146,6 +149,25 @@ impl Exe {
             product_name,
             company_name,
         })
+    }
+
+    pub fn analysis_kind(&self) -> InstallerAnalysisKind {
+        match &self.r#type {
+            ExeType::Burn(_) => InstallerAnalysisKind::Burn,
+            ExeType::Inno(_) => InstallerAnalysisKind::Inno,
+            ExeType::Nsis(_) => InstallerAnalysisKind::Nullsoft,
+            ExeType::Squirrel(squirrel) if squirrel.is_velopack => InstallerAnalysisKind::Velopack,
+            ExeType::Squirrel(_) => InstallerAnalysisKind::Squirrel,
+            ExeType::AdvancedInstaller(_) => InstallerAnalysisKind::AdvancedInstaller,
+            ExeType::Generic(_) => InstallerAnalysisKind::GenericExe,
+        }
+    }
+
+    pub fn nsis_infinite_loop(&self) -> bool {
+        match &self.r#type {
+            ExeType::Nsis(nsis) => nsis.has_infinite_loop(),
+            _ => false,
+        }
     }
 }
 
