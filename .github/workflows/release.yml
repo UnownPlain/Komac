@@ -2,19 +2,16 @@ name: Release
 
 on:
   schedule:
-    - cron: "0 0 * * 0"
-  release:
-    types: [ released ]
+    - cron: '0 0 * * 0'
+  push:
+    tags:
+      - 'v*'
 
-permissions:
-  contents: write
-
-env:
-  CARGO_TERM_COLOR: always
+permissions: {}
 
 jobs:
-  release:
-    name: Release - ${{ matrix.platform.target }}
+  build:
+    name: Build - ${{ matrix.platform.target }}
     strategy:
       fail-fast: false
       matrix:
@@ -37,46 +34,56 @@ jobs:
             target: aarch64-apple-darwin
 
     runs-on: ${{ matrix.platform.os }}
+    env:
+      PLATFORM_TARGET: ${{ matrix.platform.target }}
+      PLATFORM_BINS: ${{ matrix.platform.bins }}
+      INNO_ARCH: ${{ matrix.platform.inno_arch }}
+      GLIBC_VERSION: 2.35
     steps:
       - name: Clone repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
-      - uses: mlugg/setup-zig@v2
+      - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2.2.1
         if: contains(matrix.platform.bins, 'cargo-zigbuild')
+        with:
+          use-cache: false
 
-      - uses: moonrepo/setup-rust@v1
+      - uses: moonrepo/setup-rust@abb2d32350334249b178c401e5ec5836e0cd88d3 # v1.3.0
         with:
           targets: ${{ matrix.platform.target }}
           bins: ${{ matrix.platform.bins }}
           cache: false
 
+      - name: Create release assets directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path release-assets | Out-Null
+
       - name: Build binary
         shell: bash
-        env:
-          GLIBC_VERSION: 2.35
         run: |
-          if [[ "${{ matrix.platform.bins }}" == *"zigbuild"* ]]; then
-            build="cargo zigbuild --target ${{ matrix.platform.target }}.${GLIBC_VERSION}"
+          if [[ "$PLATFORM_BINS" == *"zigbuild"* ]]; then
+            cargo zigbuild --target "${PLATFORM_TARGET}.${GLIBC_VERSION}" --release --locked
           else
-            build="cargo build --target ${{ matrix.platform.target }}"
+            cargo build --target "$PLATFORM_TARGET" --release --locked
           fi
-          eval "$build --release --locked"
 
       - name: Create Deb package
         if: contains(matrix.platform.bins, 'cargo-deb')
         shell: pwsh
         run: |
-          $nightly = if ($env:GITHUB_EVENT_NAME -ne 'release') { "--deb-version=2.nightly" } else { "" }
-          cargo deb --target ${{ matrix.platform.target }} --no-build --no-strip $nightly
+          $nightly = if ($env:GITHUB_EVENT_NAME -eq 'schedule') { "--deb-version=2.nightly" } else { "" }
+          cargo deb --target $env:PLATFORM_TARGET --output release-assets/ --no-build --no-strip $nightly
 
       - name: Create RPM package
         if: contains(matrix.platform.bins, 'cargo-generate-rpm')
         shell: pwsh
         run: |
-          if ($env:GITHUB_EVENT_NAME -ne 'release') {
-            cargo generate-rpm --target ${{ matrix.platform.target }} --set-metadata='version="nightly"'
+          if ($env:GITHUB_EVENT_NAME -eq 'schedule') {
+            cargo generate-rpm --target $env:PLATFORM_TARGET --output release-assets/ --set-metadata='version="nightly"'
           } else {
-            cargo generate-rpm --target ${{ matrix.platform.target }}
+            cargo generate-rpm --target $env:PLATFORM_TARGET --output release-assets/
           }
 
       - name: Rename binary
@@ -84,150 +91,83 @@ jobs:
         shell: pwsh
         run: |
           $bin = if ($env:RUNNER_OS -eq 'Windows') { "komac.exe" } else { "komac" }
-          $newName = "komac"
-          if ($env:GITHUB_EVENT_NAME -ne 'release') {
-            $newName += "-nightly"
+          if ($env:GITHUB_EVENT_NAME -eq 'schedule') {
+            $newName = "komac-nightly-$env:PLATFORM_TARGET"
           } else {
-            $newName += "-$($env:GITHUB_REF_NAME.TrimStart('v'))"
+            $newName = "komac-$($env:GITHUB_REF_NAME.TrimStart('v'))-$env:PLATFORM_TARGET"
           }
-          $newName += "-${{ matrix.platform.target }}"
           if ($env:RUNNER_OS -eq 'Windows') {
             $newName += ".exe"
-            Rename-Item -Path "target/${{ matrix.platform.target }}/release/$bin" -NewName "$newName"
+            Move-Item -Path "target/$env:PLATFORM_TARGET/release/$bin" -Destination "release-assets/$newName"
           }
           "name=$newName" >> $env:GITHUB_OUTPUT
 
       - name: Create Tar archive
         if: ${{ runner.os != 'Windows' }}
+        env:
+          RENAMED_BINARY: ${{ steps.rename_binary.outputs.name }}
         run: |
-          tar -cvf ${{ steps.rename_binary.outputs.name }}.tar.gz \
+          tar -cvf "release-assets/${RENAMED_BINARY}.tar.gz" \
             --use-compress-program="gzip -9" \
-            -C target/${{ matrix.platform.target }}/release komac \
+            -C "target/${PLATFORM_TARGET}/release" komac \
             -C ../../../ LICENSE.md
-          rm target/${{ matrix.platform.target }}/release/komac
 
       - name: Create Inno Installer
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
+        env:
+          RENAMED_BINARY: ${{ steps.rename_binary.outputs.name }}
         run: |
           winget install --exact JRSoftware.InnoSetup --scope machine --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
-          $input = "../../target/${{ matrix.platform.target }}/release/${{ steps.rename_binary.outputs.name }}"
+          $input = "../../release-assets/$env:RENAMED_BINARY"
+          $output = (Resolve-Path "release-assets").Path
+          $outputName = ($env:RENAMED_BINARY -replace '\.exe$', '').Replace("komac", "komac-setup")
           & "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe" assets/inno/installer.iss `
             /DInputExecutable=$input `
-            /DArchitecture=${{ matrix.platform.inno_arch }} `
-            /F$("${{ steps.rename_binary.outputs.name }}".Replace("komac", "komac-setup").TrimEnd(".exe"))
+            /DArchitecture=$env:INNO_ARCH `
+            /O$output `
+            /F$outputName
 
-      - name: Set Release variables
-        id: set_release_vars
-        shell: pwsh
-        run: |
-          if ($env:GITHUB_EVENT_NAME -ne 'release') {
-            "name=Nightly release" >> $env:GITHUB_OUTPUT
-            "tag_name=nightly" >> $env:GITHUB_OUTPUT
-            "prerelease=true" >> $env:GITHUB_OUTPUT
-            "generate_release_notes=false" >> $env:GITHUB_OUTPUT
-          } else {
-            "prerelease=false" >> $env:GITHUB_OUTPUT
-            "generate_release_notes=true" >> $env:GITHUB_OUTPUT
-          }
-
-      - name: Release binaries
-        uses: softprops/action-gh-release@v3
+      - name: Upload release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ${{ steps.set_release_vars.outputs.name }}
-          tag_name: ${{ steps.set_release_vars.outputs.tag_name }}
-          prerelease: ${{ steps.set_release_vars.outputs.prerelease }}
-          generate_release_notes: ${{ steps.set_release_vars.outputs.generate_release_notes }}
-          files: |
-            target/${{ matrix.platform.target }}/release/${{ steps.rename_binary.outputs.name }}
-            target/${{ matrix.platform.target }}/debian/*.deb
-            target/${{ matrix.platform.target }}/generate-rpm/*.rpm
-            ${{ steps.rename_binary.outputs.name }}.tar.gz
-            assets/inno/Output/*
+          name: release-assets-${{ matrix.platform.target }}
+          path: release-assets/
+          if-no-files-found: error
 
-  generate-sha256sums:
-    name: Generate SHA256SUMS
-    needs: release
-    runs-on: ubuntu-latest
+  publish-release:
+    name: Create or update release
+    needs: build
+    runs-on: ubuntu-slim
     permissions:
-      contents: write
+      contents: write # GitHub release publish
     steps:
-      - name: Set tag name
-        id: set_tag
-        run: |
-          if [ "${{ github.event_name }}" != "release" ]; then
-            echo "tag=nightly" >> $GITHUB_OUTPUT
-          else
-            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Download release assets
-        uses: robinraju/release-downloader@v1
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          repository: ${{ github.repository }}
-          tag: ${{ steps.set_tag.outputs.tag }}
-          fileName: "*"
-          out-file-path: ./release-assets
+          pattern: release-assets-*
+          path: release-assets
+          merge-multiple: true
 
       - name: Compute SHA256SUMS
         run: |
           cd release-assets
-          rm --force SHA256SUMS
-          sha256sum --binary * > SHA256SUMS
+          sha256sum --binary -- * > SHA256SUMS
           cat SHA256SUMS
 
-      - name: Upload SHA256SUMS to release
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.set_tag.outputs.tag }}
-          files: release-assets/SHA256SUMS
-
-  upload-virus-total:
-    needs: release
-    if: ${{ github.event_name == 'release' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@v5
-        with:
-          vt_api_key: ${{ secrets.VT_API_KEY }}
-          request_rate: 4
-          files: |
-            .exe$
-            .deb$
-            .rpm$
-            .tar.gz$
-
-  publish-crates-io:
-    needs: release
-    if: ${{ github.event_name == 'release' }}
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      id-token: write
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v6
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Retrieve temporary crates.io token
-        uses: rust-lang/crates-io-auth-action@v1
-        id: auth
-
-      - name: Publish to crates.io
-        run: cargo publish
+      - name: Create or update release
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
+            tag="nightly"
+            gh release upload "$tag" release-assets/* --clobber
+          else
+            tag="$GITHUB_REF_NAME"
+            gh release create "$tag" release-assets/* \
+              --draft \
+              --generate-notes \
+              --verify-tag
+          fi
         env:
-          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
-
-  publish-winget:
-    needs: [ release, publish-crates-io ]
-    if: ${{ github.event_name == 'release' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: vedantmgoyal9/winget-releaser@main
-        with:
-          identifier: RussellBanks.Komac
-          installers-regex: 'komac-setup.*\.exe$'
-          token: ${{ secrets.WINGET_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}

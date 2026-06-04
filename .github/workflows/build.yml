@@ -18,25 +18,28 @@ on:
       - Cargo.lock
       - build.rs
 
-env:
-  CARGO_TERM_COLOR: always
+permissions: {}
 
 jobs:
   build_and_test:
     name: Rust project - latest
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master
+        with:
+          toolchain: stable
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
@@ -52,21 +55,24 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master
         with:
+          toolchain: stable
           components: clippy
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Run clippy
         run: cargo clippy
         env:
-          RUSTFLAGS: "-D warnings"
+          RUSTFLAGS: '-D warnings'
 
   publish_dry_run:
     name: Publish dry run
@@ -74,10 +80,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master
+        with:
+          toolchain: stable
 
       - name: Publish dry run
         run: cargo publish --dry-run --no-verify
@@ -88,15 +98,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           save-if: ${{ github.ref == 'refs/heads/main' }}
           cache-bin: false
 
       - name: Install cargo-msrv
-        uses: taiki-e/install-action@v2
+        uses: taiki-e/install-action@25435dc8dd3baed7417e0c96d3fe89013a5b2e09 # v2.81.3
         with:
           tool: cargo-msrv
 
@@ -114,7 +126,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
 
       - name: Check for unused dependencies
-        uses: bnjbvr/cargo-machete@main
+        uses: bnjbvr/cargo-machete@ac30a525c0a8d163a92d727b3ff079ee3f6ecb08 # v0.9.2
