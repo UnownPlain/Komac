@@ -2,12 +2,13 @@ use std::{
     collections::BTreeSet,
     mem,
     num::{NonZeroU32, NonZeroUsize},
+    str::FromStr,
 };
 
 use anstream::println;
 use camino::Utf8PathBuf;
-use clap::Parser;
-use color_eyre::eyre::Result;
+use clap::{Parser, ValueEnum};
+use color_eyre::eyre::{Result, bail, eyre};
 use indicatif::ProgressBar;
 use inquire::CustomType;
 use ordinal::Ordinal;
@@ -17,7 +18,7 @@ use winget_types::{
     LanguageTag, ManifestType, ManifestVersion, PackageIdentifier, PackageVersion,
     installer::{
         Command, FileExtension, InstallModes, InstallerManifest, InstallerSuccessCode,
-        InstallerType, Protocol, UpgradeBehavior,
+        InstallerType, NestedInstallerFiles, NestedInstallerType, Protocol, UpgradeBehavior,
         switches::{CustomSwitch, InstallerSwitches, SilentSwitch, SilentWithProgressSwitch},
     },
     locale::{
@@ -28,6 +29,7 @@ use winget_types::{
         CopyrightUrl, DecodedUrl, LicenseUrl, PackageUrl, PublisherSupportUrl, PublisherUrl,
         ReleaseNotesUrl,
     },
+    utils::ValidFileExtensions,
     version::VersionManifest,
 };
 
@@ -48,7 +50,7 @@ use crate::{
         check_prompt, handle_inquire_error,
         list::list_prompt,
         radio_prompt,
-        text::{confirm_prompt, optional_prompt, required_prompt},
+        text::{TextPrompt, confirm_prompt, optional_prompt, required_prompt},
     },
     token::TokenManager,
 };
@@ -114,6 +116,54 @@ pub struct NewVersion {
     #[arg(long, value_hint = clap::ValueHint::Url)]
     release_notes_url: Option<ReleaseNotesUrl>,
 
+    /// Run without prompting
+    #[arg(long)]
+    non_interactive: bool,
+
+    /// Treat detected exe installers as portable
+    #[arg(long)]
+    portable: bool,
+
+    /// Silent switch for exe installers
+    #[arg(long)]
+    silent: Option<SilentSwitch>,
+
+    /// Silent-with-progress switch for exe installers
+    #[arg(long)]
+    silent_with_progress: Option<SilentWithProgressSwitch>,
+
+    /// Custom switch for portable installers
+    #[arg(long)]
+    custom: Option<CustomSwitch>,
+
+    /// Install modes for the package
+    #[arg(long = "install-mode")]
+    install_modes: Vec<InstallModeCli>,
+
+    /// Additional installer success codes
+    #[arg(long = "success-code")]
+    success_codes: Vec<InstallerSuccessCode>,
+
+    /// Upgrade behavior for the package
+    #[arg(long)]
+    upgrade_behavior: Option<UpgradeBehavior>,
+
+    /// Commands or aliases exposed by the package
+    #[arg(long = "command")]
+    commands: Vec<Command>,
+
+    /// Protocol handlers exposed by the package
+    #[arg(long = "protocol")]
+    protocols: Vec<Protocol>,
+
+    /// File extensions exposed by the package
+    #[arg(long = "file-extension")]
+    file_extensions: Vec<FileExtension>,
+
+    /// Tags to include in the default locale manifest
+    #[arg(long = "tag")]
+    tags: Vec<Tag>,
+
     /// Number of installers to download at the same time
     #[arg(long, default_value_t = NonZeroUsize::new(num_cpus::get()).unwrap())]
     concurrent_downloads: NonZeroUsize,
@@ -142,7 +192,7 @@ pub struct NewVersion {
     #[arg(long, env = "OPEN_PR")]
     open_pr: bool,
 
-    /// Run without prompting or submitting
+    /// Run without submitting
     #[arg(long, env = "DRY_RUN")]
     dry_run: bool,
 
@@ -159,12 +209,37 @@ pub struct NewVersion {
     token: Option<SecretString>,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
+enum InstallModeCli {
+    Interactive,
+    Silent,
+    SilentWithProgress,
+}
+
+impl InstallModeCli {
+    const fn into_flag(self) -> InstallModes {
+        match self {
+            Self::Interactive => InstallModes::INTERACTIVE,
+            Self::Silent => InstallModes::SILENT,
+            Self::SilentWithProgress => InstallModes::SILENT_WITH_PROGRESS,
+        }
+    }
+}
+
 impl NewVersion {
-    pub async fn run(self) -> Result<()> {
-        let token_manager = TokenManager::handle(self.token).await?;
+    pub async fn run(mut self) -> Result<()> {
+        let non_interactive = self.non_interactive;
+        let dry_run = self.dry_run || (non_interactive && !self.submit);
+
+        let token_manager = TokenManager::handle(self.token.take()).await?;
         let github = GitHub::new(token_manager)?;
 
-        let package_identifier = required_prompt(self.package_identifier, None::<&str>)?;
+        let package_identifier = resolve_required(
+            self.package_identifier.take(),
+            None::<&str>,
+            non_interactive,
+            "--package-identifier",
+        )?;
 
         let (versions, font) = github
             .get_versions(&package_identifier, self.font.then_some(true))
@@ -181,20 +256,35 @@ impl NewVersion {
         let manifests =
             latest_version.map(|version| github.get_manifests(&package_identifier, version, font));
 
-        let package_version = required_prompt(self.package_version, None::<&str>)?;
+        let package_version = resolve_required(
+            self.package_version.take(),
+            None::<&str>,
+            non_interactive,
+            "--version",
+        )?;
 
         if !self.skip_pr_check
-            && !self.dry_run
+            && !dry_run
             && let Some(pull_request) = github
                 .get_existing_pull_request(&package_identifier, &package_version)
                 .await?
-            && !prompt_existing_pull_request(&package_identifier, &package_version, &pull_request)?
         {
-            return Ok(());
+            if non_interactive
+                || !prompt_existing_pull_request(
+                    &package_identifier,
+                    &package_version,
+                    &pull_request,
+                )?
+            {
+                return Ok(());
+            }
         }
 
-        let mut urls = self.urls;
+        let mut urls = mem::take(&mut self.urls);
         if urls.is_empty() {
+            if non_interactive {
+                bail!("Missing required option --urls");
+            }
             while urls.len() < 1024 {
                 let message = format!("{} Installer URL", Ordinal(urls.len() + 1));
                 let url_prompt =
@@ -243,25 +333,73 @@ impl NewVersion {
                 .iter()
                 .any(|installer| installer.r#type == Some(InstallerType::Exe))
             {
-                if confirm_prompt(&format!("Is {} a portable exe?", analyzer.file_name))? {
+                let is_portable = self.portable
+                    || resolve_confirm(
+                        false,
+                        non_interactive,
+                        &format!("Is {} a portable exe?", analyzer.file_name),
+                    )?;
+                if is_portable {
                     for installer in &mut analyzer.installers {
                         installer.r#type = Some(InstallerType::Portable);
                     }
+                } else if non_interactive {
+                    ensure_exe_switches(self.silent.as_ref(), self.silent_with_progress.as_ref())?;
                 }
-                silent = Some(required_prompt::<SilentSwitch, &str>(None, None)?);
-                silent_with_progress = Some(required_prompt::<SilentWithProgressSwitch, &str>(
-                    None, None,
-                )?);
+                if non_interactive {
+                    silent.clone_from(&self.silent);
+                    silent_with_progress.clone_from(&self.silent_with_progress);
+                } else {
+                    silent = Some(resolve_required(
+                        self.silent.clone(),
+                        None::<&str>,
+                        non_interactive,
+                        "--silent",
+                    )?);
+                    silent_with_progress = Some(resolve_required(
+                        self.silent_with_progress.clone(),
+                        None::<&str>,
+                        non_interactive,
+                        "--silent-with-progress",
+                    )?);
+                }
             }
             if analyzer
                 .installers
                 .iter()
                 .any(|installer| installer.r#type == Some(InstallerType::Portable))
             {
-                custom = optional_prompt::<CustomSwitch, &str>(None, None)?;
+                custom = resolve_optional(self.custom.clone(), None::<&str>, non_interactive)?;
             }
             if let Some(zip) = &mut analyzer.zip {
-                zip.prompt()?;
+                if non_interactive {
+                    if !zip.possible_installer_files.is_empty() {
+                        let nested_installer_files = zip
+                            .possible_installer_files
+                            .iter()
+                            .cloned()
+                            .map(|relative_file_path| NestedInstallerFiles {
+                                relative_file_path,
+                                portable_command_alias: None,
+                            })
+                            .collect::<BTreeSet<_>>();
+                        let nested_installer_type = zip
+                            .possible_installer_files
+                            .iter()
+                            .find_map(nested_installer_type_from_path);
+
+                        for installer in &mut zip.installers {
+                            if installer.nested_installer_type.is_none() {
+                                installer.nested_installer_type = nested_installer_type;
+                            }
+                            installer
+                                .nested_installer_files
+                                .clone_from(&nested_installer_files);
+                        }
+                    }
+                } else {
+                    zip.prompt()?;
+                }
                 for (analyzer_installer, zip_installer) in
                     analyzer.installers.iter_mut().zip(zip.installers.iter())
                 {
@@ -285,7 +423,12 @@ impl NewVersion {
             installers.extend(analyzer_installers);
         }
 
-        let default_locale = required_prompt(self.package_locale, Some("en-US"))?;
+        let default_locale = resolve_required(
+            self.package_locale.take(),
+            Some("en-US"),
+            non_interactive,
+            "--package-locale",
+        )?;
         let mut installer_manifest = InstallerManifest {
             package_identifier: package_identifier.clone(),
             package_version: package_version.clone(),
@@ -303,19 +446,45 @@ impl NewVersion {
                 .any(|installer| installer.r#type == Some(InstallerType::Inno))
             {
                 InstallModes::all()
-            } else {
+            } else if self.install_modes.is_empty() && !non_interactive {
                 check_prompt::<InstallModes>()?
+            } else {
+                self.install_modes
+                    .iter()
+                    .fold(InstallModes::empty(), |modes, mode| {
+                        modes | mode.into_flag()
+                    })
             };
-            installer_manifest.success_codes = list_prompt::<InstallerSuccessCode>()?;
-            installer_manifest.upgrade_behavior = Some(radio_prompt::<UpgradeBehavior>()?);
-            installer_manifest.commands = list_prompt::<Command>()?;
-            installer_manifest.protocols = list_prompt::<Protocol>()?;
+            installer_manifest.success_codes = resolve_list(
+                mem::take(&mut self.success_codes),
+                non_interactive,
+                list_prompt::<InstallerSuccessCode>,
+            )?;
+            installer_manifest.upgrade_behavior = resolve_radio(
+                self.upgrade_behavior.take(),
+                non_interactive,
+                radio_prompt::<UpgradeBehavior>,
+            )?;
+            installer_manifest.commands = resolve_list(
+                mem::take(&mut self.commands),
+                non_interactive,
+                list_prompt::<Command>,
+            )?;
+            installer_manifest.protocols = resolve_list(
+                mem::take(&mut self.protocols),
+                non_interactive,
+                list_prompt::<Protocol>,
+            )?;
             installer_manifest.file_extensions = if installer_manifest
                 .installers
                 .iter()
                 .all(|installer| installer.file_extensions.is_empty())
             {
-                list_prompt::<FileExtension>()?
+                resolve_list(
+                    mem::take(&mut self.file_extensions),
+                    non_interactive,
+                    list_prompt::<FileExtension>,
+                )?
             } else {
                 BTreeSet::new()
             };
@@ -330,8 +499,8 @@ impl NewVersion {
             package_identifier: package_identifier.clone(),
             package_version: package_version.clone(),
             package_locale: default_locale.clone(),
-            publisher: required_prompt(
-                self.publisher,
+            publisher: resolve_required(
+                self.publisher.take(),
                 download_results
                     .values()
                     .find(|analyzer| analyzer.publisher.is_some())
@@ -341,72 +510,94 @@ impl NewVersion {
                             .as_ref()
                             .and_then(|values| values.publisher.as_ref())
                     }),
+                non_interactive,
+                "--publisher",
             )?,
-            publisher_url: optional_prompt(
-                self.publisher_url,
+            publisher_url: resolve_optional(
+                self.publisher_url.take(),
                 github_values.as_ref().map(|values| &values.publisher_url),
+                non_interactive,
             )?,
-            publisher_support_url: optional_prompt(
-                self.publisher_support_url,
+            publisher_support_url: resolve_optional(
+                self.publisher_support_url.take(),
                 github_values
                     .as_ref()
                     .and_then(|values| values.issues_url.as_ref()),
+                non_interactive,
             )?,
-            author: optional_prompt(self.author, None::<&str>)?,
-            package_name: required_prompt(
-                self.package_name,
+            author: resolve_optional(self.author.take(), None::<&str>, non_interactive)?,
+            package_name: resolve_required(
+                self.package_name.take(),
                 download_results
                     .values()
                     .find(|analyzer| analyzer.package_name.is_some())
                     .and_then(|analyzer| analyzer.package_name.as_ref()),
+                non_interactive,
+                "--package-name",
             )?,
-            package_url: optional_prompt(
-                self.package_url,
+            package_url: resolve_optional(
+                self.package_url.take(),
                 github_values.as_ref().map(|values| &values.package_url),
+                non_interactive,
             )?,
-            license: required_prompt(
-                self.license,
+            license: resolve_required(
+                self.license.take(),
                 github_values
                     .as_ref()
                     .and_then(|values| values.license.as_ref()),
+                non_interactive,
+                "--license",
             )?,
-            license_url: optional_prompt(
-                self.license_url,
+            license_url: resolve_optional(
+                self.license_url.take(),
                 github_values
                     .as_ref()
                     .and_then(|values| values.license_url.as_ref()),
+                non_interactive,
             )?,
-            copyright: optional_prompt(
-                self.copyright,
+            copyright: resolve_optional(
+                self.copyright.take(),
                 download_results
                     .values()
                     .find(|analyzer| analyzer.copyright.is_some())
                     .and_then(|analyzer| analyzer.copyright.as_ref()),
+                non_interactive,
             )?,
-            copyright_url: optional_prompt(self.copyright_url, None::<&str>)?,
-            short_description: required_prompt(
-                self.short_description,
+            copyright_url: resolve_optional(
+                self.copyright_url.take(),
+                None::<&str>,
+                non_interactive,
+            )?,
+            short_description: resolve_required(
+                self.short_description.take(),
                 github_values
                     .as_ref()
                     .and_then(|values| values.description.as_ref()),
+                non_interactive,
+                "--short-description",
             )?,
-            description: optional_prompt(self.description, None::<&str>)?,
-            moniker: optional_prompt(self.moniker, None::<&str>)?,
+            description: resolve_optional(self.description.take(), None::<&str>, non_interactive)?,
+            moniker: resolve_optional(self.moniker.take(), None::<&str>, non_interactive)?,
             tags: match github_values
                 .as_mut()
                 .map(|values| mem::take(&mut values.topics))
             {
                 Some(topics) => topics,
-                None => list_prompt::<Tag>()?,
+                None => resolve_list(
+                    mem::take(&mut self.tags),
+                    non_interactive,
+                    list_prompt::<Tag>,
+                )?,
             },
             release_notes: github_values
                 .as_mut()
                 .and_then(|values| values.release_notes.take()),
-            release_notes_url: optional_prompt(
-                self.release_notes_url,
+            release_notes_url: resolve_optional(
+                self.release_notes_url.take(),
                 github_values
                     .as_ref()
                     .and_then(|values| values.release_notes_url.as_ref()),
+                non_interactive,
             )?,
             manifest_type: ManifestType::DefaultLocale,
             ..DefaultLocaleManifest::default()
@@ -456,10 +647,14 @@ impl NewVersion {
             &package_identifier,
             &package_version,
             self.submit,
-            self.dry_run,
+            dry_run,
         )?;
 
-        if let Some(output) = self.output.map(|out| out.join(package_path.as_str())) {
+        if let Some(output) = self
+            .output
+            .as_ref()
+            .map(|out| out.join(package_path.as_str()))
+        {
             write_changes_to_dir(&changes, output.as_path()).await?;
             println!(
                 "{} written all manifest files to {output}",
@@ -498,5 +693,128 @@ impl NewVersion {
         }
 
         Ok(())
+    }
+}
+
+fn nested_installer_type_from_path(path: &Utf8PathBuf) -> Option<NestedInstallerType> {
+    let extension = path.extension()?.parse::<ValidFileExtensions>().ok()?;
+
+    Some(match extension {
+        ValidFileExtensions::Msix | ValidFileExtensions::MsixBundle => NestedInstallerType::Msix,
+        ValidFileExtensions::Msi => NestedInstallerType::Msi,
+        ValidFileExtensions::Appx | ValidFileExtensions::AppxBundle => NestedInstallerType::Appx,
+        ValidFileExtensions::Exe => NestedInstallerType::Exe,
+        ValidFileExtensions::Fnt
+        | ValidFileExtensions::Otc
+        | ValidFileExtensions::Otf
+        | ValidFileExtensions::Ttc
+        | ValidFileExtensions::Ttf => NestedInstallerType::Font,
+        ValidFileExtensions::Zip => return None,
+    })
+}
+
+fn ensure_exe_switches(
+    silent: Option<&SilentSwitch>,
+    silent_with_progress: Option<&SilentWithProgressSwitch>,
+) -> Result<()> {
+    if silent.is_none() {
+        bail!("Missing required option --silent for exe installers");
+    }
+    if silent_with_progress.is_none() {
+        bail!("Missing required option --silent-with-progress for exe installers");
+    }
+    Ok(())
+}
+
+fn resolve_confirm(value: bool, non_interactive: bool, message: &str) -> Result<bool> {
+    if non_interactive {
+        Ok(value)
+    } else {
+        Ok(confirm_prompt(message)?)
+    }
+}
+
+fn resolve_required<T, U>(
+    parameter: Option<T>,
+    default: Option<U>,
+    non_interactive: bool,
+    option_name: &str,
+) -> Result<T>
+where
+    T: FromStr + TextPrompt,
+    <T as FromStr>::Err: std::fmt::Display + ToString + std::fmt::Debug + Sync + Send + 'static,
+    U: AsRef<str>,
+{
+    match parameter {
+        Some(value) => Ok(value),
+        None if non_interactive => default
+            .map(|value| {
+                value
+                    .as_ref()
+                    .parse::<T>()
+                    .map_err(|err| eyre!(err.to_string()))
+            })
+            .transpose()?
+            .ok_or_else(|| eyre!("Missing required option {option_name}")),
+        None => Ok(required_prompt(None, default)?),
+    }
+}
+
+fn resolve_optional<T, U>(
+    parameter: Option<T>,
+    default: Option<U>,
+    non_interactive: bool,
+) -> Result<Option<T>>
+where
+    T: FromStr + TextPrompt,
+    <T as FromStr>::Err: std::fmt::Display + std::fmt::Debug + Sync + Send + 'static,
+    U: AsRef<str>,
+{
+    match parameter {
+        Some(value) => Ok(Some(value)),
+        None if non_interactive => default
+            .map(|value| {
+                value
+                    .as_ref()
+                    .parse::<T>()
+                    .map_err(|err| eyre!(err.to_string()))
+            })
+            .transpose(),
+        None => Ok(optional_prompt(None, default)?),
+    }
+}
+
+fn resolve_list<T, F>(
+    items: Vec<T>,
+    non_interactive: bool,
+    interactive_prompt: F,
+) -> Result<BTreeSet<T>>
+where
+    T: Ord,
+    F: FnOnce() -> Result<BTreeSet<T>>,
+{
+    if items.is_empty() {
+        if non_interactive {
+            Ok(BTreeSet::new())
+        } else {
+            interactive_prompt()
+        }
+    } else {
+        Ok(items.into_iter().collect())
+    }
+}
+
+fn resolve_radio<T, F>(
+    value: Option<T>,
+    non_interactive: bool,
+    interactive_prompt: F,
+) -> Result<Option<T>>
+where
+    F: FnOnce() -> inquire::error::InquireResult<T>,
+{
+    match value {
+        Some(value) => Ok(Some(value)),
+        None if non_interactive => Ok(None),
+        None => Ok(Some(interactive_prompt()?)),
     }
 }
